@@ -87,35 +87,43 @@
     <div class="container mx-auto p-4 md:p-6 pb-20">
         
         <!-- شاشة تسجيل الدخول -->
-        <div id="login-panel" class="max-w-md mx-auto glass-card p-8 mt-10 md:mt-16 fade-in">
-            <div class="text-center mb-8">
-                <div class="bg-rctws-primary w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-slate-200">
-                    <span class="text-4xl text-rctws-accent">🏛️</span>
-                </div>
-                <h2 class="text-2xl font-black text-rctws-primary mb-2">بوابة الدخول الموحدة</h2>
-                <p class="text-sm text-slate-500 font-bold">تسجيل الدخول مؤمن بواسطة Firebase Auth</p>
-            </div>
+        <div id="login-panel" class="max-w-5xl mx-auto mt-8 md:mt-12 fade-in grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-bold text-rctws-primary mb-1.5">البريد الإلكتروني المؤسسي</label>
-                    <input type="email" id="email-input" value="admin@rctws.com" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
+            <div class="glass-card p-8 shadow-2xl">
+                <div class="text-center mb-8">
+                    <div class="bg-rctws-primary w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-slate-200">
+                        <span class="text-4xl text-rctws-accent">🏛️</span>
+                    </div>
+                    <h2 class="text-2xl font-black text-rctws-primary mb-2">بوابة الدخول الموحدة</h2>
+                    <p class="text-sm text-slate-500 font-bold">تسجيل الدخول مؤمن بواسطة Firebase Auth</p>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold text-rctws-primary mb-1.5">كلمة المرور</label>
-                    <input type="password" id="password-input" value="adminRCTWS" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
+                
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-bold text-rctws-primary mb-1.5">البريد الإلكتروني المؤسسي</label>
+                        <input type="email" id="email-input" value="admin@rctws.com" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-rctws-primary mb-1.5">كلمة المرور</label>
+                        <input type="password" id="password-input" value="adminRCTWS" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
+                    </div>
+                    <button id="login-submit-btn" class="w-full bg-rctws-primary hover:bg-rctws-secondary text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-rctws-primary/30 transition duration-200">تسجيل الدخول للنظام</button>
                 </div>
-                <button id="login-submit-btn" class="w-full bg-rctws-primary hover:bg-rctws-secondary text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-rctws-primary/30 transition duration-200">تسجيل الدخول</button>
             </div>
-            
-            <div class="mt-8 pt-6 border-t border-slate-200">
-                <div class="text-[11px] text-right text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner space-y-2 leading-relaxed">
-                    <p class="font-black text-slate-800 mb-1">حسابات الإدارات الحقيقية (باسوورد للجميع: 123456):</p>
-                    <p>👑 <b>رئيس المركز:</b> admin@rctws.com (Pass: adminRCTWS)</p>
-                    <p>⚖️ <b>مدير الشئون القانونية:</b> b_elsayed@rctws.com</p>
-                    <p>🗂️ <b>مدير المحفوظات:</b> h_fawzy@rctws.com</p>
-                    <p>🔬 <b>مدير المعامل:</b> r_amer@rctws.com</p>
-                    <p>👨‍💻 <b>موظف قانوني:</b> h_fathy@rctws.com</p>
+
+            <div class="glass-card p-8 bg-slate-50 border-r-4 border-r-rctws-secondary shadow-lg">
+                <h3 class="font-black text-rctws-primary text-lg mb-4 border-b border-slate-200 pb-2 flex items-center gap-2"><span>👥</span> حسابات الإدارات (مستخرجة من الملفات)</h3>
+                <p class="text-xs text-rose-600 font-bold mb-4">تم سحب وفلترة بيانات الهيكل الإداري الفعلي للمركز بالكامل. باسوورد جميع الحسابات (ما عدا الأدمن) هو: <b>123456</b></p>
+                <div class="space-y-2 text-xs font-bold text-slate-600 leading-relaxed max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                    <p class="text-slate-800 bg-white p-2 rounded border border-slate-100 shadow-sm">👑 <b>رئيس المركز:</b> admin@rctws.com <br><span class="text-[10px] text-slate-400">(Pass: adminRCTWS)</span></p>
+                    <p class="bg-white p-2 rounded border border-slate-100">⚖️ <b>مدير الشئون القانونية:</b> b_morsi@rctws.com <br> > <b>موظف (أ.هبه فتحي):</b> h_fathy@rctws.com</p>
+                    <p class="bg-white p-2 rounded border border-slate-100">🗂️ <b>مدير المحفوظات:</b> h_fawzy@rctws.com <br> > <b>موظف (أ.محمد عادل):</b> m_adel@rctws.com</p>
+                    <p class="bg-white p-2 rounded border border-slate-100">📈 <b>مدير التخطيط:</b> m_taher@rctws.com <br> > <b>موظف (م.ز/سندس):</b> s_abdelalim@rctws.com</p>
+                    <p class="bg-white p-2 rounded border border-slate-100">💵 <b>مدير الحسابات:</b> a_qasem@rctws.com <br> > <b>موظف (أ.أماني علي):</b> a_ibrahim@rctws.com</p>
+                    <p class="bg-white p-2 rounded border border-slate-100">💻 <b>مدير تنفيذ البرامج:</b> s_yehia@rctws.com <br> > <b>منسق (أ.إيناس لطفي):</b> e_lotfy@rctws.com</p>
+                    <p class="bg-white p-2 rounded border border-slate-100">🛡️ <b>مدير الأمن:</b> s_abdelal@rctws.com <br> > <b>فرد أمن (أ.كمال):</b> k_mohamed@rctws.com</p>
+                    <p class="bg-white p-2 rounded border border-slate-100">👥 <b>مدير الموارد البشرية:</b> h_shousha@rctws.com <br> > <b>موظف (أ.صباح):</b> s_abouelyazeed@rctws.com</p>
+                    <p class="bg-white p-2 rounded border border-slate-100">🏢 <b>مدير شئون المقر:</b> m_samy@rctws.com <br> > <b>موظف (أ.أحمد نبيل IT):</b> a_nabil@rctws.com</p>
                 </div>
             </div>
         </div>
@@ -209,11 +217,11 @@
             <div id="manager-dashboard" class="hidden flex-col gap-6 fade-in">
                 
                 <!-- تقييم الحضور والانصراف -->
-                <div class="glass-card overflow-hidden">
+                <div class="glass-card overflow-hidden shadow-sm">
                     <div class="bg-rctws-primary px-6 py-4 border-b border-rctws-primary flex items-center justify-between text-white">
                         <div class="flex items-center gap-2">
                             <span class="text-xl">⏱️</span>
-                            <h3 class="font-black text-lg">سجل وتقييم الحضور والانصراف</h3>
+                            <h3 class="font-black text-lg">سجل وتقييم الحضور والانصراف للإدارة</h3>
                         </div>
                         <span class="text-xs bg-white/20 px-3 py-1 rounded-lg font-bold" id="mgr-today-date"></span>
                     </div>
@@ -237,13 +245,13 @@
                 </div>
 
                 <!-- إسناد المهام (مربوطة بنسبة 80% من الحافز) -->
-                <div class="glass-card p-6" id="manager-assign-area">
+                <div class="glass-card p-6 shadow-sm" id="manager-assign-area">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-100 pb-4 gap-4">
                         <div class="flex items-center gap-3">
                             <div class="bg-rctws-accent/20 p-2 rounded-lg text-rctws-accent text-xl">🎯</div>
                             <div>
                                 <h3 class="text-xl font-black text-rctws-primary">إسناد المهام الدورية للفريق</h3>
-                                <p class="text-xs font-bold text-slate-500 mt-1">المهام تمثل 80% من قيمة الحافز المتغير للموظف.</p>
+                                <p class="text-xs font-bold text-slate-500 mt-1">المهام تمثل 80% من قيمة الحافز المتغير للموظف. (قائمة المهام مأخوذة من الهيكل الإداري)</p>
                             </div>
                         </div>
                     </div>
@@ -254,7 +262,7 @@
                             <select id="assign-employee-select" class="w-full rounded-xl p-3 text-sm font-bold bg-white shadow-sm"></select>
                         </div>
                         <div class="lg:col-span-3">
-                            <label class="block text-xs font-black text-slate-600 mb-2">المهمة (من مهام الإدارة)</label>
+                            <label class="block text-xs font-black text-slate-600 mb-2">المهمة (من مكتبة القطاع)</label>
                             <select id="assign-template-select" class="w-full rounded-xl p-3 text-sm font-bold bg-white shadow-sm"></select>
                         </div>
                         <div class="lg:col-span-2">
@@ -302,7 +310,7 @@
                     </div>
                 </div>
 
-                <div class="glass-card overflow-hidden">
+                <div class="glass-card overflow-hidden shadow-sm">
                     <div class="bg-slate-50 px-6 py-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2"><span>📊</span> تقييم أداء وتقارير الفريق</h3>
                     </div>
@@ -328,19 +336,19 @@
             <div id="admin-dashboard" class="hidden flex-col gap-8 fade-in">
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="glass-card border-rctws-accent border-b-4 bg-gradient-to-br from-white to-[#fffdf5] p-6 relative overflow-hidden flex flex-col justify-center text-center">
+                    <div class="glass-card border-rctws-accent border-b-4 bg-gradient-to-br from-white to-[#fffdf5] p-6 relative overflow-hidden flex flex-col justify-center text-center shadow-md">
                         <div class="text-5xl mb-2">🏆</div>
                         <h3 class="text-slate-500 font-black text-sm mb-1">نجم المركز (الموظف الأعلى تقييماً)</h3>
                         <p id="admin-stat-best-emp" class="text-2xl font-black text-rctws-primary mt-2">-</p>
                         <p id="admin-stat-best-emp-score" class="text-sm font-bold text-rctws-accent mt-1"></p>
                     </div>
-                    <div class="glass-card border-slate-300 border-b-4 bg-gradient-to-br from-white to-slate-50 p-6 relative overflow-hidden flex flex-col justify-center text-center">
+                    <div class="glass-card border-slate-300 border-b-4 bg-gradient-to-br from-white to-slate-50 p-6 relative overflow-hidden flex flex-col justify-center text-center shadow-md">
                         <div class="text-5xl mb-2">🎖️</div>
                         <h3 class="text-slate-500 font-black text-sm mb-1">أفضل إدارة (المدير المثالي)</h3>
                         <p id="admin-stat-best-mgr" class="text-2xl font-black text-rctws-primary mt-2">-</p>
                         <p id="admin-stat-best-mgr-score" class="text-sm font-bold text-slate-500 mt-1"></p>
                     </div>
-                    <div class="glass-card p-6 flex flex-col justify-center">
+                    <div class="glass-card p-6 flex flex-col justify-center shadow-md">
                         <h3 class="text-slate-500 font-black text-sm mb-4 border-b pb-2">مؤشرات الأداء العامة للمركز</h3>
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
@@ -383,14 +391,17 @@
                     </div>
                 </div>
 
-                <div class="glass-card p-6">
-                    <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+                <div class="glass-card p-6 shadow-sm">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 border-b border-slate-100 pb-4 gap-4">
                         <div class="flex items-center gap-3">
                             <div class="bg-rctws-secondary/10 p-2 rounded-lg text-rctws-secondary text-xl">👥</div>
-                            <h3 class="text-xl font-black text-rctws-primary">إدارة الهيكل الوظيفي والمستخدمين</h3>
+                            <div>
+                                <h3 class="text-xl font-black text-rctws-primary">إدارة الهيكل الوظيفي والمستخدمين</h3>
+                                <p class="text-[11px] text-slate-500 font-bold mt-1">يحتوي النظام على قائمة مفلترة ومدمجة بالبيانات الحقيقية للعاملين بالمركز.</p>
+                            </div>
                         </div>
                         <button onclick="openCreateUserModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-lg text-sm shadow-md transition flex items-center gap-2">
-                            <span>➕</span> إضافة مستخدم جديد (مربوط بـ Firebase)
+                            <span>➕</span> إضافة مستخدم جديد بـ Firebase
                         </button>
                     </div>
                     
@@ -411,7 +422,7 @@
                     </div>
                 </div>
 
-                <div class="glass-card overflow-hidden">
+                <div class="glass-card overflow-hidden shadow-sm">
                     <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
                         <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2"><span>🔎</span> الرقابة الشاملة على المهام (سجل كامل)</h3>
                     </div>
@@ -463,10 +474,24 @@
                 <div>
                     <label class="block text-xs font-black text-slate-500 mb-1">الإدارة التابع لها</label>
                     <select id="new-user-dept" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50">
+                        <option value="الإدارة العليا">الإدارة العليا</option>
+                        <option value="المكتب الفني">المكتب الفني</option>
                         <option value="الشئون القانونية">الشئون القانونية</option>
                         <option value="المحفوظات">المحفوظات</option>
                         <option value="المعامل">المعامل</option>
-                        <option value="أخرى">أخرى</option>
+                        <option value="التخطيط والمتابعة">التخطيط والمتابعة</option>
+                        <option value="الحسابات">الحسابات</option>
+                        <option value="الموارد البشرية">الموارد البشرية</option>
+                        <option value="إدارة المراسم">إدارة المراسم</option>
+                        <option value="العلاقات العامة">العلاقات العامة</option>
+                        <option value="تنفيذ البرامج">تنفيذ البرامج</option>
+                        <option value="التدريب الطلابي">التدريب الطلابي</option>
+                        <option value="شئون المقر">شئون المقر</option>
+                        <option value="تكنولوجيا المعلومات">تكنولوجيا المعلومات</option>
+                        <option value="إدارة السيارات">إدارة السيارات</option>
+                        <option value="الحدائق والبساتين">الحدائق والبساتين</option>
+                        <option value="الأمن">الأمن</option>
+                        <option value="الفروع الخارجية">الفروع الخارجية</option>
                     </select>
                 </div>
                 <div>
@@ -497,7 +522,7 @@
         </div>
     </div>
 
-    <!-- تعديل المستخدم (للأدمن) -->
+    <!-- تعديل / إيقاف المستخدم (للأدمن) -->
     <div id="edit-user-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm">
         <div class="glass-card p-8 w-full max-w-md relative bg-white">
             <h3 class="font-black text-rctws-primary text-xl mb-6 border-b border-slate-100 pb-3">تعديل الرواتب والصلاحيات</h3>
@@ -533,8 +558,8 @@
                 </div>
             </div>
             <div class="mt-8 flex gap-3">
-                <button onclick="saveUserEdit()" class="flex-1 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 rounded-xl transition shadow">حفظ التعديلات</button>
-                <button onclick="document.getElementById('edit-user-modal').classList.add('hidden')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black py-3 rounded-xl transition">إغلاق</button>
+                <button onclick="saveUserEdit()" class="flex-2 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 px-4 rounded-xl transition shadow text-sm">حفظ التعديلات</button>
+                <button onclick="document.getElementById('edit-user-modal').classList.add('hidden')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black py-3 rounded-xl transition text-sm">إغلاق</button>
             </div>
         </div>
     </div>
@@ -557,51 +582,83 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // 1. المتغيرات وإعداد قاعدة البيانات الافتراضية بناءً على الملفات
-        const DB_PREFIX = 'rctws_erp_v1_'; 
+        // تم تغيير الـ prefix لضمان عمل Seed جديد للقاعدة الشاملة
+        const DB_PREFIX = 'rctws_erp_full_v2_'; 
         let currentUser = null, users = [], tasks = [], templates = [], systemDate = '', attendanceLogs = [];
 
         const DB = {
             get: (key) => { const data = localStorage.getItem(`${DB_PREFIX}${key}`); return data ? JSON.parse(data) : null; },
             set: (key, val) => { localStorage.setItem(`${DB_PREFIX}${key}`, JSON.stringify(val)); },
             seed: () => {
-                // الهيكل الوظيفي الحقيقي المستخرج من الملفات المرفقة
+                // تجميع وفرز وتخصيص رواتب لجميع الإدارات الرئيسية والموظفين المستخرجين من الملفات
                 const defaultUsers = [
-                    { id: 'admin1', email: 'admin@rctws.com', name: 'أ.د سلوى أبو العلا', role: 'admin', department: 'الإدارة العليا', phone: '100', baseSalary: 15000, variableSalary: 10000 },
+                    { id: 'admin1', email: 'admin@rctws.com', name: 'أ.د سلوى أبو العلا (رئيس المركز)', role: 'admin', department: 'الإدارة العليا', baseSalary: 20000, variableSalary: 15000 },
                     
-                    // الشئون القانونية
-                    { id: 'mgr_legal', email: 'b_elsayed@rctws.com', name: 'أ. بخيت السيد مرسي', role: 'manager', department: 'الشئون القانونية', phone: '200', baseSalary: 7000, variableSalary: 5000 },
-                    { id: 'emp_legal1', email: 'h_fathy@rctws.com', name: 'أ. هبه فتحي حامد', role: 'employee', managerId: 'mgr_legal', department: 'الشئون القانونية', phone: '201', baseSalary: 4500, variableSalary: 3500 },
-                    { id: 'emp_legal2', email: 's_ibrahim@rctws.com', name: 'أ. صابر إبراهيم رفاعي', role: 'employee', managerId: 'mgr_legal', department: 'الشئون القانونية', phone: '202', baseSalary: 4000, variableSalary: 3000 },
-                    
-                    // المحفوظات
-                    { id: 'mgr_arch', email: 'h_fawzy@rctws.com', name: 'أ. هاله فوزي عبدالوهاب', role: 'manager', department: 'المحفوظات', phone: '300', baseSalary: 6000, variableSalary: 4000 },
-                    { id: 'emp_arch1', email: 'm_adel@rctws.com', name: 'أ. محمد عادل محمد', role: 'employee', managerId: 'mgr_arch', department: 'المحفوظات', phone: '301', baseSalary: 3500, variableSalary: 2500 },
-                    { id: 'emp_arch2', email: 's_ahmed@rctws.com', name: 'أ. سمية أحمد', role: 'employee', managerId: 'mgr_arch', department: 'المحفوظات', phone: '302', baseSalary: 3500, variableSalary: 2500 },
+                    // المديرين
+                    { id: 'm_legal', email: 'b_morsi@rctws.com', name: 'أ. بخيت السيد مرسي', role: 'manager', department: 'الشئون القانونية', baseSalary: 7000, variableSalary: 5000 },
+                    { id: 'm_arch', email: 'h_fawzy@rctws.com', name: 'أ. هالة فوزي', role: 'manager', department: 'المحفوظات', baseSalary: 6000, variableSalary: 4000 },
+                    { id: 'm_lab', email: 'i_helmy@rctws.com', name: 'م.ز/ إيمان حلمي', role: 'manager', department: 'المعامل', baseSalary: 6500, variableSalary: 4500 },
+                    { id: 'm_plan', email: 'm_taher@rctws.com', name: 'م.ز/ مروة طاهر', role: 'manager', department: 'التخطيط والمتابعة', baseSalary: 8000, variableSalary: 6000 },
+                    { id: 'm_acc', email: 'a_qasem@rctws.com', name: 'أ. عادل عبد القادر', role: 'manager', department: 'الحسابات', baseSalary: 8000, variableSalary: 6000 },
+                    { id: 'm_hr', email: 'h_shousha@rctws.com', name: 'أ. حنان مصطفى أبو شوشة', role: 'manager', department: 'الموارد البشرية', baseSalary: 8000, variableSalary: 6000 },
+                    { id: 'm_pr', email: 'h_youssef@rctws.com', name: 'أ. هند يوسف', role: 'manager', department: 'العلاقات العامة', baseSalary: 7000, variableSalary: 5000 },
+                    { id: 'm_prog', email: 's_yehia@rctws.com', name: 'م/ سحر يحيى', role: 'manager', department: 'تنفيذ البرامج', baseSalary: 7500, variableSalary: 5000 },
+                    { id: 'm_hq', email: 'm_samy@rctws.com', name: 'م/ منى سامي', role: 'manager', department: 'شئون المقر', baseSalary: 7500, variableSalary: 5000 },
+                    { id: 'm_cars', email: 'r_mohy@rctws.com', name: 'أ. ريهام محى', role: 'manager', department: 'إدارة السيارات', baseSalary: 6000, variableSalary: 4000 },
+                    { id: 'm_agri', email: 'a_gamal@rctws.com', name: 'د.ز/ احمد جمال الدين', role: 'manager', department: 'الحدائق والبساتين', baseSalary: 6500, variableSalary: 4500 },
+                    { id: 'm_sec', email: 's_abdelal@rctws.com', name: 'أ. شعبان عبدالعال', role: 'manager', department: 'الأمن', baseSalary: 6000, variableSalary: 4000 },
 
-                    // المعامل
-                    { id: 'mgr_lab', email: 'r_amer@rctws.com', name: 'أ. رضا محمد عامر', role: 'manager', department: 'المعامل', phone: '400', baseSalary: 6500, variableSalary: 4500 }
+                    // الموظفين الممثلين
+                    { id: 'e_leg1', email: 'h_fathy@rctws.com', name: 'أ. هبه فتحي حامد', role: 'employee', managerId: 'm_legal', department: 'الشئون القانونية', baseSalary: 4500, variableSalary: 3500 },
+                    { id: 'e_leg2', email: 'e_hassan@rctws.com', name: 'أ. صابر إبراهيم رفاعي', role: 'employee', managerId: 'm_legal', department: 'الشئون القانونية', baseSalary: 4000, variableSalary: 3000 },
+                    { id: 'e_arc1', email: 'm_adel@rctws.com', name: 'أ. محمد عادل', role: 'employee', managerId: 'm_arch', department: 'المحفوظات', baseSalary: 3500, variableSalary: 2500 },
+                    { id: 'e_pln1', email: 'a_mostafa@rctws.com', name: 'م.ز/ اسماء مصطفى', role: 'employee', managerId: 'm_plan', department: 'التخطيط والمتابعة', baseSalary: 5000, variableSalary: 4000 },
+                    { id: 'e_pln2', email: 's_abdelalim@rctws.com', name: 'م.ز/ سندس عبد العليم', role: 'employee', managerId: 'm_plan', department: 'التخطيط والمتابعة', baseSalary: 5000, variableSalary: 4000 },
+                    { id: 'e_acc1', email: 's_abdelhamid@rctws.com', name: 'أ. سمير عبد الحميد', role: 'employee', managerId: 'm_acc', department: 'الحسابات', baseSalary: 5000, variableSalary: 4000 },
+                    { id: 'e_acc2', email: 'a_ibrahim@rctws.com', name: 'أ. أماني علي', role: 'employee', managerId: 'm_acc', department: 'الحسابات', baseSalary: 5000, variableSalary: 4000 },
+                    { id: 'e_hr1', email: 's_abouelyazeed@rctws.com', name: 'أ. صباح أحمد أبو اليزيد', role: 'employee', managerId: 'm_hr', department: 'الموارد البشرية', baseSalary: 5000, variableSalary: 3500 },
+                    { id: 'e_hr2', email: 'm_elhussiny@rctws.com', name: 'أ. منال محمود الحسينى', role: 'employee', managerId: 'm_hr', department: 'الموارد البشرية', baseSalary: 5000, variableSalary: 3500 },
+                    { id: 'e_pr1', email: 's_youssef@rctws.com', name: 'أ. سارة يوسف', role: 'employee', managerId: 'm_pr', department: 'العلاقات العامة', baseSalary: 4500, variableSalary: 3500 },
+                    { id: 'e_prog1', email: 'e_lotfy@rctws.com', name: 'أ. إيناس لطفي', role: 'employee', managerId: 'm_prog', department: 'تنفيذ البرامج', baseSalary: 4500, variableSalary: 3500 },
+                    { id: 'e_hq1', email: 'a_nabil@rctws.com', name: 'أ. أحمد نبيل (IT)', role: 'employee', managerId: 'm_hq', department: 'تكنولوجيا المعلومات', baseSalary: 4500, variableSalary: 3500 },
+                    { id: 'e_car1', email: 'h_salem@rctws.com', name: 'أ. حازم محمد سالم', role: 'employee', managerId: 'm_cars', department: 'إدارة السيارات', baseSalary: 3500, variableSalary: 2500 },
+                    { id: 'e_agr1', email: 'y_farouk@rctws.com', name: 'أ. يحي فاروق', role: 'employee', managerId: 'm_agri', department: 'الحدائق والبساتين', baseSalary: 3000, variableSalary: 2000 },
+                    { id: 'e_sec1', email: 'k_mohamed@rctws.com', name: 'أ. كمال محمد', role: 'employee', managerId: 'm_sec', department: 'الأمن', baseSalary: 3000, variableSalary: 2000 }
                 ];
 
-                // المهام المستخرجة من الملفات
+                // مكتبة المهام الشاملة المستخرجة
                 const defaultTemplates = [
-                    // شئون قانونية
-                    { id: 'tpl_l1', title: 'دراسة ومراجعة العقود وإبداء الرأي' },
-                    { id: 'tpl_l2', title: 'التحقيق في المذكرات الواردة' },
-                    { id: 'tpl_l3', title: 'حضور لجان الفتح الفني والمالي' },
-                    { id: 'tpl_l4', title: 'الرد على دعاوى مجلس الدولة والنيابة' },
-                    // محفوظات
-                    { id: 'tpl_a1', title: 'استلام البوسطة الواردة والصادرة وتسجيلها' },
-                    { id: 'tpl_a2', title: 'توزيع البوسطة على الإدارات' },
-                    { id: 'tpl_a3', title: 'حفظ وأرشفة المستندات (سكانر + ملفات)' },
-                    // معامل
-                    { id: 'tpl_b1', title: 'فتح المعمل والتأكد من النظافة والسلامة' },
-                    { id: 'tpl_b2', title: 'تحضير الأجهزة للتجارب' }
+                    { id: 'tpl_1', title: 'دراسة ومراجعة العقود وإبداء الرأي (قانونية)' },
+                    { id: 'tpl_2', title: 'التحقيق في المذكرات الواردة والرد عليها' },
+                    { id: 'tpl_3', title: 'حضور لجان الفتح الفني والمالي' },
+                    { id: 'tpl_4', title: 'استلام وتصوير وتوزيع البوسطة الواردة' },
+                    { id: 'tpl_5', title: 'أرشفة المستندات وعمل مسح ضوئي' },
+                    { id: 'tpl_6', title: 'صيانة ونظافة المعمل وتحضير الأجهزة للتجارب' },
+                    { id: 'tpl_7', title: 'تصميم كتيب خطة البرامج ودليل البرامج' },
+                    { id: 'tpl_8', title: 'إعداد تقارير الإنجاز الدورية (شهرية/ربع سنوية)' },
+                    { id: 'tpl_9', title: 'تنفيذ أعمال قياس أثر التدريب للبرامج' },
+                    { id: 'tpl_10', title: 'الإعداد لملف الأيزو ونظام الجودة' },
+                    { id: 'tpl_11', title: 'مراجعة مستندات الصرف لجميع الأبواب' },
+                    { id: 'tpl_12', title: 'القيد بدفاتر الوحدة الحسابية والتسويات البنكية' },
+                    { id: 'tpl_13', title: 'إنشاء أوامر الدفع الإلكترونية (GFMIS)' },
+                    { id: 'tpl_14', title: 'مراجعة المرتبات والمكافآت (Payroll)' },
+                    { id: 'tpl_15', title: 'متابعة مستحقات باب ثان وتحرير الأوامر الإدارية' },
+                    { id: 'tpl_16', title: 'متابعة البصمة وتحويلها لتأخيرات وإجازات' },
+                    { id: 'tpl_17', title: 'استقبال الوفود وتنسيق الإقامة والمراسم' },
+                    { id: 'tpl_18', title: 'الإشراف على أعمال لجنة المطعم والتفتيش' },
+                    { id: 'tpl_19', title: 'إدارة دورات التحول الرقمي وإنشاء روابط Zoom' },
+                    { id: 'tpl_20', title: 'متابعة الكشوف الورقية والفنادق للبرامج الفعلية' },
+                    { id: 'tpl_21', title: 'استيفاء واعتماد المستندات المالية والتقرير الختامي' },
+                    { id: 'tpl_22', title: 'تقديم الدعم الفني لأجهزة الكمبيوتر والشبكة' },
+                    { id: 'tpl_23', title: 'متابعة الصيانة والأعمال المدنية للمبنى والفنادق' },
+                    { id: 'tpl_24', title: 'متابعة أوامر التشغيل وصيانة السيارات والكروت' },
+                    { id: 'tpl_25', title: 'صيانة المسطحات الخضراء ومشتل القطاع' },
+                    { id: 'tpl_26', title: 'تأمين المركز والمرور على طفايات الحريق والكاميرات' },
+                    { id: 'tpl_27', title: 'تسجيل دخول وخروج المتدربين والزائرين' }
                 ];
 
                 DB.set('users', defaultUsers); DB.set('templates', defaultTemplates); DB.set('tasks', []); 
                 const d = new Date();
-                // If weekend, default to Monday
                 if(d.getDay() === 5) d.setDate(d.getDate() + 2);
                 if(d.getDay() === 6) d.setDate(d.getDate() + 1);
                 DB.set('simDate', d.toISOString().split('T')[0]); 
@@ -642,7 +699,7 @@
                     currentUser = matchedUser;
                     initWorkspace();
                 } else {
-                    showToast("حسابك صحيح في Firebase لكن غير مسجل في الهيكل الإداري للـ ERP.", "⚠️");
+                    showToast("حسابك صحيح في Firebase لكن غير مسجل في الهيكل الإداري للـ ERP أو تم إيقافه.", "⚠️");
                     await signOut(auth);
                 }
             } catch (error) {
@@ -814,7 +871,6 @@
             const pendingExist = myTasks.some(t => ['pending', 'completed'].includes(t.status));
             
             // لحساب التقييم النهائي، نفرض أن المهام تمثل 80% من الحافز، والحضور 20%
-            // وللتبسيط الآن في الواجهة: نجمع نتيجة المهام (من 100).
             let finalEvalPercent = tasksScorePercent; 
             
             // تفعيل قاعدة الـ 90% للحافز المتغير
@@ -1076,8 +1132,9 @@
                         <td class="p-4 text-[10px] font-bold">${roleD} <span class="block mt-1 text-slate-400">${u.department}</span></td>
                         <td class="p-4 text-center font-black">${u.baseSalary || 0}</td>
                         <td class="p-4 text-center font-black text-rctws-accent">${u.variableSalary || 0}</td>
-                        <td class="p-4 text-center">
-                            <button onclick="openEditUserModal('${u.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-bold">إدارة الراتب / الصلاحية</button>
+                        <td class="p-4 text-center flex flex-col gap-2">
+                            <button onclick="openEditUserModal('${u.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-bold">الراتب / الصلاحية</button>
+                            ${u.id !== currentUser.id ? `<button onclick="deleteUser('${u.id}')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-bold w-full">إيقاف / حذف</button>` : ''}
                         </td>
                     </tr>`;
             });
@@ -1105,6 +1162,16 @@
                 if(reject) { t.complaint = null; showToast("تم تأييد قرار المدير ورفض التظلم.", "⚖️"); }
                 else { t.complaint = null; t.status = 'completed'; showToast("تم فتح المهمة ليعيد المدير تقييمها.", "🔄"); }
                 DB.set('tasks', tasks); renderDashboard();
+            }
+        };
+
+        // الإيقاف / الحذف اللوجيستي من قاعدة الـ ERP
+        window.deleteUser = (userId) => {
+            if(confirm("هل أنت متأكد من إيقاف وحذف هذا المستخدم؟ لن يتمكن من الدخول للمنظومة الإدارية مجدداً حتى لو كان حساب Firebase الخاص به نشطاً.")) {
+                users = users.filter(u => u.id !== userId);
+                DB.set('users', users);
+                showToast("تم إيقاف وحذف المستخدم من قاعدة بيانات المنظومة.", "🗑️");
+                renderDashboard();
             }
         };
 
