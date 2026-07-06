@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النظام المتكامل لإدارة التقييمات والأداء - مركز التدريب الإقليمي</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
-        body { 
-            font-family: 'Tajawal', sans-serif; 
-            background-color: #f4f7f6;
-        }
+        body { font-family: 'Tajawal', sans-serif; background-color: #f4f7f6; }
         .bg-rctws-primary { background-color: #0c3359; }
         .bg-rctws-secondary { background-color: #1a5b8e; }
         .bg-rctws-accent { background-color: #d4af37; }
@@ -24,31 +25,18 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
         .glass-card {
-            background: white;
-            border: 1px solid rgba(200, 210, 220, 0.6);
-            box-shadow: 0 8px 30px rgba(12, 51, 89, 0.04);
-            border-radius: 1.5rem;
+            background: white; border: 1px solid rgba(200, 210, 220, 0.6);
+            box-shadow: 0 8px 30px rgba(12, 51, 89, 0.04); border-radius: 1.5rem;
         }
         
-        select, input, textarea {
-            border: 1px solid #cbd5e1;
-            transition: all 0.3s ease;
-        }
-        select:focus, input:focus, textarea:focus {
-            border-color: #1a5b8e;
-            box-shadow: 0 0 0 3px rgba(26, 91, 142, 0.1);
-            outline: none;
-        }
+        select, input, textarea { border: 1px solid #cbd5e1; transition: all 0.3s ease; }
+        select:focus, input:focus, textarea:focus { border-color: #1a5b8e; box-shadow: 0 0 0 3px rgba(26, 91, 142, 0.1); outline: none; }
         select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%230c3359' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: left 0.75rem center;
-            background-repeat: no-repeat;
-            background-size: 1.25em 1.25em;
-            padding-left: 2.5rem;
-            appearance: none;
+            background-position: left 0.75rem center; background-repeat: no-repeat;
+            background-size: 1.25em 1.25em; padding-left: 2.5rem; appearance: none;
         }
         
-        /* شريط التحميل لرفع الإكسيل */
         #upload-progress-container { display: none; }
         #upload-progress-bar { width: 0%; transition: width 0.3s; }
     </style>
@@ -71,7 +59,6 @@
             </div>
             
             <div id="user-tools-bar" class="hidden flex-wrap items-center justify-center gap-3">
-                
                 <div class="bg-rctws-secondary border border-white/20 p-2 rounded-xl flex items-center gap-2 text-xs shadow-inner">
                     <span class="font-bold text-white/80">تاريخ النظام:</span>
                     <input type="date" id="system-date" class="text-rctws-primary p-1.5 rounded-lg border-none font-bold text-xs bg-white shadow-sm cursor-pointer w-32">
@@ -108,7 +95,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-rctws-primary mb-1.5">كلمة المرور</label>
-                        <input type="password" id="password-input" value="adminRCTWS" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
+                        <input type="password" id="password-input" value="123456" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
                     </div>
                     <button id="login-submit-btn" class="w-full bg-rctws-primary hover:bg-rctws-secondary text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-rctws-primary/30 transition duration-200">تسجيل الدخول للنظام</button>
                 </div>
@@ -122,7 +109,6 @@
         <div id="main-workspace" class="hidden flex-col gap-8 fade-in mt-4">
             
             <div id="employee-dashboard" class="hidden flex-col gap-6 fade-in">
-                
                 <div class="glass-card p-6 border-t-4 border-t-rctws-secondary">
                     <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                         <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2"><span>⏱️</span> تسجيل الحضور والانصراف اليومي</h3>
@@ -200,6 +186,12 @@
 
             <div id="manager-dashboard" class="hidden flex-col gap-6 fade-in">
                 
+                <div class="flex justify-end">
+                    <button onclick="printMonthlyReport('manager')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-6 py-3 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+                        <span>🖨️</span> طباعة تقرير أداء ورواتب الإدارة (PDF)
+                    </button>
+                </div>
+
                 <div class="glass-card overflow-hidden shadow-sm">
                     <div class="bg-rctws-primary px-6 py-4 border-b border-rctws-primary flex items-center justify-between text-white">
                         <div class="flex items-center gap-2">
@@ -312,26 +304,26 @@
 
             <div id="admin-dashboard" class="hidden flex-col gap-8 fade-in">
                 
+                <div class="flex justify-end">
+                    <button onclick="printMonthlyReport('admin')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-6 py-3 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+                        <span>🖨️</span> طباعة التقرير العام لرواتب المركز (PDF)
+                    </button>
+                </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="glass-card border-rctws-accent border-b-4 bg-gradient-to-br from-white to-[#fffdf5] p-6 relative overflow-hidden flex flex-col justify-center text-center shadow-md">
                         <div class="text-5xl mb-2">🏆</div>
-                        <h3 class="text-slate-500 font-black text-sm mb-1">نجم المركز (الموظف الأعلى تقييماً)</h3>
-                        <p id="admin-stat-best-emp" class="text-2xl font-black text-rctws-primary mt-2">-</p>
-                        <p id="admin-stat-best-emp-score" class="text-sm font-bold text-rctws-accent mt-1"></p>
+                        <h3 class="text-slate-500 font-black text-sm mb-1">إجمالي الموظفين المسجلين</h3>
+                        <p id="admin-stat-total-users" class="text-3xl font-black text-rctws-primary mt-2">-</p>
                     </div>
                     <div class="glass-card border-slate-300 border-b-4 bg-gradient-to-br from-white to-slate-50 p-6 relative overflow-hidden flex flex-col justify-center text-center shadow-md">
                         <div class="text-5xl mb-2">🎖️</div>
-                        <h3 class="text-slate-500 font-black text-sm mb-1">أفضل إدارة (المدير المثالي)</h3>
-                        <p id="admin-stat-best-mgr" class="text-2xl font-black text-rctws-primary mt-2">-</p>
-                        <p id="admin-stat-best-mgr-score" class="text-sm font-bold text-slate-500 mt-1"></p>
+                        <h3 class="text-slate-500 font-black text-sm mb-1">إجمالي المهام النشطة</h3>
+                        <p id="admin-stat-total-tasks" class="text-3xl font-black text-rctws-primary mt-2">0</p>
                     </div>
                     <div class="glass-card p-6 flex flex-col justify-center shadow-md">
-                        <h3 class="text-slate-500 font-black text-sm mb-4 border-b pb-2">مؤشرات الأداء العامة للمركز</h3>
+                        <h3 class="text-slate-500 font-black text-sm mb-4 border-b pb-2">مؤشرات الإنجاز للمهام</h3>
                         <div class="space-y-3">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm font-bold text-slate-600">إجمالي المهام النشطة:</span>
-                                <span id="admin-stat-total-tasks" class="font-black text-lg text-rctws-primary">0</span>
-                            </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm font-bold text-slate-600">المهام المنجزة والمقيمة:</span>
                                 <span id="admin-stat-completed" class="font-black text-lg text-emerald-600">0</span>
@@ -377,7 +369,7 @@
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2">
                             <button onclick="downloadExcelTemplate()" class="bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-black px-4 py-2 rounded-lg text-sm shadow-sm transition flex items-center gap-2">
-                                <span>📥</span> تحميل قالب Excel
+                                <span>📥</span> تحميل قالب Excel المتقدم
                             </button>
                             <label class="bg-rctws-secondary hover:bg-rctws-primary text-white font-black px-4 py-2 rounded-lg text-sm shadow-md transition flex items-center gap-2 cursor-pointer">
                                 <span>📤</span> رفع ملف Excel للفايربيز
@@ -391,7 +383,7 @@
                     
                     <div id="upload-progress-container" class="mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-black text-slate-600">جاري إنشاء الحسابات في خوادم Firebase...</span>
+                            <span class="text-xs font-black text-slate-600">جاري معالجة البيانات وبناء الهيكل في خوادم Firebase...</span>
                             <span id="upload-progress-text" class="text-xs font-bold text-rctws-primary">0 / 0</span>
                         </div>
                         <div class="w-full bg-slate-200 rounded-full h-3">
@@ -605,7 +597,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        // إضافة مكتبات Firestore
         import { getFirestore, collection, doc, setDoc, getDocs, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
@@ -626,7 +617,6 @@
         const secondaryAuth = getAuth(secondaryApp);
 
         let currentUser = null, users = [], tasks = [], templates = [], attendanceLogs = [];
-        // الاحتفاظ بتاريخ النظام في التخزين المحلي للمتصفح
         let systemDate = localStorage.getItem('rctws_simDate') || new Date().toISOString().split('T')[0];
 
         window.showToast = (msg, icon = "💡") => {
@@ -639,19 +629,15 @@
         // ================= Migration to Firestore =================
         async function fetchFirestoreData() {
             try {
-                // جلب المستخدمين
                 const usersSnap = await getDocs(collection(db, "users"));
                 users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-                // جلب المهام
                 const tasksSnap = await getDocs(collection(db, "tasks"));
                 tasks = tasksSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-                // جلب سجل الحضور
                 const attSnap = await getDocs(collection(db, "attendance"));
                 attendanceLogs = attSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-                // مهام افتراضية للـ Templates
                 templates = [
                     { id: 'tpl_1', title: 'دراسة ومراجعة العقود وإبداء الرأي' },
                     { id: 'tpl_11', title: 'إعداد تقارير الإنجاز الشهرية والربع سنوية' },
@@ -685,7 +671,6 @@
                     currentUser = matchedUser;
                     initWorkspace();
                 } else {
-                    // إذا كان الحساب الأدمن الرئيسي غير موجود بعد في Firestore، نقوم بإنشائه كأول مرة
                     if (emailIn.includes('admin')) {
                         const newAdmin = { id: auth.currentUser.uid, email: emailIn, name: 'رئيس المركز (إدارة عليا)', role: 'admin', department: 'الإدارة العليا', baseSalary: 20000, variableSalary: 15000, authPass: passwordIn };
                         await setDoc(doc(db, "users", auth.currentUser.uid), newAdmin);
@@ -1094,6 +1079,8 @@
         window.renderAdminDashboard = () => {
             const dash = document.getElementById('admin-dashboard'); dash.classList.remove('hidden'); dash.classList.add('flex');
             
+            document.getElementById('admin-stat-total-users').innerText = users.length;
+            
             const compBody = document.getElementById('admin-complaints-body'); compBody.innerHTML = '';
             const complaints = tasks.filter(t => t.complaint !== null);
             
@@ -1182,7 +1169,7 @@
             }
         };
 
-        // ================= الأمان وتغيير الباسورد (إصدار متقدم) =================
+        // ================= الأمان وتغيير الباسورد =================
         
         window.openChangePasswordModal = () => {
             document.getElementById('current-user-pass-input').value = '';
@@ -1203,14 +1190,10 @@
             const user = auth.currentUser;
             if(user) {
                 try {
-                    // Re-authenticate first
                     const credential = EmailAuthProvider.credential(user.email, currentPass);
                     await reauthenticateWithCredential(user, credential);
                     
-                    // Update password
                     await updatePassword(user, newPass);
-                    
-                    // Update fallback authPass in Firestore for Admin override
                     await updateDoc(doc(db, "users", user.uid), { authPass: newPass });
 
                     showToast("تم تغيير كلمة المرور بنجاح! يرجى الدخول مجدداً.", "✅");
@@ -1228,7 +1211,6 @@
             }
         };
 
-        // الحل البرمجي لتعيين كلمة مرور للمستخدم من قبل الأدمن دون حذف الحساب
         window.adminForceResetPassword = async () => {
             const userId = document.getElementById('edit-user-id').value;
             const newPass = document.getElementById('admin-force-pass-input').value;
@@ -1238,15 +1220,12 @@
 
             if(confirm(`هل أنت متأكد من فرض تغيير كلمة المرور للموظف: ${u.email} ؟`)) {
                 try {
-                    // استخدام التطبيق الثانوي لتسجيل الدخول كالموظف باستخدام كلمة مروره المحفوظة مؤقتاً في Firestore
-                    const currentPassFallback = u.authPass || "123456"; // Fallback للمستخدمين القدامى
+                    const currentPassFallback = u.authPass || "123456";
                     const userCred = await signInWithEmailAndPassword(secondaryAuth, u.email, currentPassFallback);
                     
-                    // تغيير كلمة المرور
                     await updatePassword(userCred.user, newPass);
                     await signOut(secondaryAuth);
                     
-                    // تحديث الرمز في Firestore للمرة القادمة
                     u.authPass = newPass;
                     await updateDoc(doc(db, "users", userId), { authPass: newPass });
 
@@ -1259,7 +1238,7 @@
             }
         };
 
-        // ================= الإكسيل ومؤشرات الأداء المجمعة =================
+        // ================= الإكسيل ومؤشرات الأداء =================
         
         window.openUserDashboard = (userId) => {
             const u = users.find(x => x.id === userId); if(!u) return;
@@ -1298,28 +1277,39 @@
         };
 
         window.downloadExcelTemplate = () => {
-            const data = [
-                { 
-                    "الإدارة": "تقنية المعلومات",
-                    "الشخص المسئول": "أحمد محمد (مثال)", 
-                    "المسمى الوظيفي": "مهندس شبكات",
-                    "المهام / المسئوليات": "1- صيانة السيرفرات\n2- تحديث أجهزة الكمبيوتر\n3- الدعم الفني اليومي",
-                    "دورية التنفيذ": "شهرية",
-                    "الإيميل": "ahmed@rctws.com", 
-                    "كلمة المرور": "123456", 
-                    "إيميل المدير المباشر": "manager_it@rctws.com", 
-                    "الراتب الأساسي": 5000, 
-                    "الحافز المتغير": 2500,
-                    "الدور الوظيفي": "employee"
-                }
-            ];
+            const templateRow = { 
+                "الإدارة": "تقنية المعلومات",
+                "الشخص المسئول": "أحمد محمد (مثال)", 
+                "المسمى الوظيفي": "مهندس شبكات",
+                "دورية التنفيذ": "شهرية",
+                "الإيميل": "ahmed@rctws.com", 
+                "كلمة المرور": "123456", 
+                "إيميل المدير المباشر": "manager_it@rctws.com", 
+                "الراتب الأساسي": 5000, 
+                "الحافز المتغير": 2500,
+                "الدور الوظيفي": "employee"
+            };
+
+            for (let i = 1; i <= 30; i++) {
+                templateRow[`مهمة ${i}`] = i <= 3 ? `وصف المهمة رقم ${i} هنا...` : "";
+            }
+
+            const data = [templateRow];
             const worksheet = XLSX.utils.json_to_sheet(data);
-            const wscols = [{wch: 20}, {wch: 25}, {wch: 20}, {wch: 40}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}];
+            
+            const wscols = [
+                {wch: 20}, {wch: 25}, {wch: 20}, {wch: 15}, {wch: 25}, 
+                {wch: 15}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}
+            ];
+            for (let i = 1; i <= 30; i++) {
+                wscols.push({wch: 35});
+            }
+            
             worksheet['!cols'] = wscols;
 
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Employees & Tasks");
-            XLSX.writeFile(workbook, "RCTWS_ERP_Complete_Template.xlsx");
+            XLSX.writeFile(workbook, "RCTWS_ERP_Dynamic_Tasks_Template.xlsx");
         };
 
         window.handleExcelUpload = (event) => {
@@ -1366,7 +1356,6 @@
                     let newUserId = null;
 
                     try {
-                        // إنشاء المستخدم في الـ Auth
                         const userCred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
                         newUserId = userCred.user.uid;
                         
@@ -1382,31 +1371,40 @@
 
                     } catch (error) {
                         if(error.code === 'auth/email-already-in-use') {
-                            // إذا كان موجوداً، نجلب الـ ID الخاص به لربط المهام
                             const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
                             if(existingUser) newUserId = existingUser.id;
                         }
                     }
 
-                    // Smart Task Parsing (استخراج المهام المجمعة)
-                    if(newUserId && row["المهام / المسئوليات"]) {
-                        const tasksString = String(row["المهام / المسئوليات"]);
-                        const taskLines = tasksString.split(/\n/).filter(t => t.trim().length > 0);
+                    if(newUserId) {
+                        const validTasks = [];
                         
-                        // تقسيم الوزن المالي برمجياً على المهام
-                        const weightPerTask = Math.floor(100 / taskLines.length) || 100;
-                        const deadlineDate = new Date(); deadlineDate.setDate(deadlineDate.getDate() + 30); // المهام تُسلم بعد 30 يوم كمثال
-                        const deadlineStr = deadlineDate.toISOString().split('T')[0];
-                        
-                        for (let line of taskLines) {
-                            // إزالة الأرقام والشرطات الترقيمية (مثل 1- أو - )
-                            let cleanTitle = line.replace(/^\d+[\-\.\)]\s*/, '').replace(/^[\-\*]\s*/, '').trim();
-                            if(cleanTitle) {
+                        for (const key in row) {
+                            if (key.includes("مهمة") && row[key] && String(row[key]).trim() !== "") {
+                                validTasks.push(String(row[key]).trim());
+                            }
+                        }
+
+                        if (validTasks.length > 0) {
+                            const weightPerTask = parseFloat((100 / validTasks.length).toFixed(2));
+                            const deadlineDate = new Date(); 
+                            deadlineDate.setDate(deadlineDate.getDate() + 30); 
+                            const deadlineStr = deadlineDate.toISOString().split('T')[0];
+                            
+                            for (let taskTitle of validTasks) {
                                 const newTaskId = 'task_' + Date.now() + Math.random().toString(36).substr(2, 5);
                                 const taskData = {
-                                    employeeId: newUserId, managerId: mgrId, title: cleanTitle, frequency: freq, 
-                                    deadline: deadlineStr, weight: weightPerTask, status: 'pending', evaluation: 0, 
-                                    locked: false, complaint: null, empNote: null
+                                    employeeId: newUserId, 
+                                    managerId: mgrId, 
+                                    title: taskTitle, 
+                                    frequency: freq, 
+                                    deadline: deadlineStr, 
+                                    weight: weightPerTask, 
+                                    status: 'pending', 
+                                    evaluation: 0, 
+                                    locked: false, 
+                                    complaint: null, 
+                                    empNote: null
                                 };
                                 await setDoc(doc(db, "tasks", newTaskId), taskData);
                                 tasks.push({id: newTaskId, ...taskData});
@@ -1421,7 +1419,7 @@
                 
                 setTimeout(() => {
                     document.getElementById('upload-progress-container').style.display = 'none';
-                    showToast(`تم استيراد ${successUsers} موظف و ${successTasks} مهمة مجزأة بنجاح!`, "✅");
+                    showToast(`تم استيراد ${successUsers} موظف و ${successTasks} مهمة ديناميكية بنجاح!`, "✅");
                 }, 2000);
             };
             reader.readAsArrayBuffer(file);
@@ -1508,6 +1506,91 @@
             document.getElementById('edit-user-modal').classList.add('hidden'); 
             renderDashboard(); 
             showToast("تم تحديث بيانات الموظف بنجاح", "🔐");
+        };
+
+        // ================= طباعة تقرير PDF الشهري =================
+        window.printMonthlyReport = (scope) => {
+            showToast("جاري تجهيز التقرير للطباعة...", "⏳");
+            
+            // تحديد نطاق الموظفين المطلوب للتقرير بناءً على الصلاحية
+            let targetUsers = [];
+            if(scope === 'manager') {
+                targetUsers = users.filter(u => u.managerId === currentUser.id);
+            } else if (scope === 'admin') {
+                targetUsers = users;
+            }
+            
+            if (targetUsers.length === 0) return showToast("لا يوجد موظفين في هذا النطاق.", "⚠️");
+
+            // بناء صفوف الجدول برمجياً
+            let tableRows = '';
+            targetUsers.forEach(u => {
+                const uTasks = tasks.filter(t => t.employeeId === u.id);
+                let earnedPercent = 0;
+                
+                uTasks.forEach(t => {
+                    if (t.status === 'evaluated') earnedPercent += (t.evaluation / 100) * t.weight;
+                });
+                
+                // تطبيق قاعدة صرف 100% إذا تعدى التقييم 90% ولا يوجد مهام معلقة
+                if (earnedPercent >= 90 && !uTasks.some(t => ['pending', 'completed'].includes(t.status))) {
+                    earnedPercent = 100;
+                }
+                
+                const earnedVar = (u.variableSalary || 0) * (earnedPercent / 100);
+                const net = (u.baseSalary || 0) + earnedVar;
+                
+                tableRows += `
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 10px; font-weight: bold;">${u.name}</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">${u.department}</td>
+                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold; color: #1a5b8e;">${earnedPercent.toFixed(1)}%</td>
+                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold; color: #059669;">${Math.round(net).toLocaleString()} ج.م</td>
+                    </tr>
+                `;
+            });
+
+            // بناء الهيكل الأساسي للطباعة بلغة HTML
+            const htmlContent = `
+                <div style="font-family: 'Tajawal', sans-serif; direction: rtl; padding: 30px; color: #0c3359; background-color: white;">
+                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #d4af37; padding-bottom: 20px;">
+                        <h1 style="margin: 0; font-size: 26px; font-weight: 900;">مركز التدريب الإقليمي للموارد المائية والري</h1>
+                        <h2 style="margin: 10px 0; font-size: 20px; color: #1a5b8e; font-weight: 800;">تقرير الأداء والرواتب الشهري</h2>
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 14px; font-weight: bold; color: #475569;">
+                            <span>التاريخ المعتمد: ${systemDate}</span>
+                            <span>النطاق: ${scope === 'manager' ? 'إدارة ' + currentUser.department : 'كافة إدارات المركز'}</span>
+                        </div>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: right;">
+                        <thead>
+                            <tr style="background-color: #f4f7f6; color: #0c3359;">
+                                <th style="border: 1px solid #ddd; padding: 12px; font-weight: 900;">اسم الموظف</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; font-weight: 900;">الإدارة</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; font-weight: 900; text-align: center;">نسبة إنجاز المهام الكلية</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; font-weight: 900; text-align: center;">الصافي المستحق (أساسي + متغير)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 40px; font-size: 12px; text-align: left; color: #94a3b8; font-weight: bold;">تم إصدار هذا التقرير آلياً وموثق من نظام ERP بواسطة: ${currentUser.name}</p>
+                </div>
+            `;
+
+            // إعدادات مكتبة html2pdf
+            const opt = {
+                margin:       10,
+                filename:     `Monthly_Report_${systemDate}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // تفعيل التحميل
+            html2pdf().set(opt).from(htmlContent).save().then(() => {
+                showToast("تم تحميل تقرير الـ PDF بنجاح!", "✅");
+            });
         };
 
         window.onload = () => { 
