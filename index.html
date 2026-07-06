@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النظام المتكامل لإدارة التقييمات والأداء - مركز التدريب الإقليمي</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة التعامل مع ملفات Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
         body { 
             font-family: 'Tajawal', sans-serif; 
             background-color: #f4f7f6;
         }
-        /* الألوان الرسمية للمؤسسة */
         .bg-rctws-primary { background-color: #0c3359; }
         .bg-rctws-secondary { background-color: #1a5b8e; }
         .bg-rctws-accent { background-color: #d4af37; }
@@ -46,6 +48,10 @@
             padding-left: 2.5rem;
             appearance: none;
         }
+        
+        /* شريط التحميل لرفع الإكسيل */
+        #upload-progress-container { display: none; }
+        #upload-progress-bar { width: 0%; transition: width 0.3s; }
     </style>
 </head>
 <body class="text-slate-800">
@@ -87,15 +93,14 @@
     <div class="container mx-auto p-4 md:p-6 pb-20">
         
         <!-- شاشة تسجيل الدخول -->
-        <div id="login-panel" class="max-w-5xl mx-auto mt-8 md:mt-12 fade-in grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            
+        <div id="login-panel" class="max-w-md mx-auto mt-10 md:mt-16 fade-in">
             <div class="glass-card p-8 shadow-2xl">
                 <div class="text-center mb-8">
                     <div class="bg-rctws-primary w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-slate-200">
                         <span class="text-4xl text-rctws-accent">🏛️</span>
                     </div>
                     <h2 class="text-2xl font-black text-rctws-primary mb-2">بوابة الدخول الموحدة</h2>
-                    <p class="text-sm text-slate-500 font-bold">تسجيل الدخول مؤمن بواسطة Firebase Auth</p>
+                    <p class="text-sm text-slate-500 font-bold">تسجيل الدخول مؤمن بواسطة خوادم Firebase</p>
                 </div>
                 
                 <div class="space-y-5">
@@ -109,21 +114,9 @@
                     </div>
                     <button id="login-submit-btn" class="w-full bg-rctws-primary hover:bg-rctws-secondary text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-rctws-primary/30 transition duration-200">تسجيل الدخول للنظام</button>
                 </div>
-            </div>
-
-            <div class="glass-card p-8 bg-slate-50 border-r-4 border-r-rctws-secondary shadow-lg">
-                <h3 class="font-black text-rctws-primary text-lg mb-4 border-b border-slate-200 pb-2 flex items-center gap-2"><span>👥</span> حسابات الإدارات (مستخرجة من الملفات)</h3>
-                <p class="text-xs text-rose-600 font-bold mb-4">تم سحب وفلترة بيانات الهيكل الإداري الفعلي للمركز بالكامل. باسوورد جميع الحسابات (ما عدا الأدمن) هو: <b>123456</b></p>
-                <div class="space-y-2 text-xs font-bold text-slate-600 leading-relaxed max-h-80 overflow-y-auto pr-2 custom-scrollbar">
-                    <p class="text-slate-800 bg-white p-2 rounded border border-slate-100 shadow-sm">👑 <b>رئيس المركز:</b> admin@rctws.com <br><span class="text-[10px] text-slate-400">(Pass: adminRCTWS)</span></p>
-                    <p class="bg-white p-2 rounded border border-slate-100">⚖️ <b>مدير الشئون القانونية:</b> b_morsi@rctws.com <br> > <b>موظف (أ.هبه فتحي):</b> h_fathy@rctws.com</p>
-                    <p class="bg-white p-2 rounded border border-slate-100">🗂️ <b>مدير المحفوظات:</b> h_fawzy@rctws.com <br> > <b>موظف (أ.محمد عادل):</b> m_adel@rctws.com</p>
-                    <p class="bg-white p-2 rounded border border-slate-100">📈 <b>مدير التخطيط:</b> m_taher@rctws.com <br> > <b>موظف (م.ز/سندس):</b> s_abdelalim@rctws.com</p>
-                    <p class="bg-white p-2 rounded border border-slate-100">💵 <b>مدير الحسابات:</b> a_qasem@rctws.com <br> > <b>موظف (أ.أماني علي):</b> a_ibrahim@rctws.com</p>
-                    <p class="bg-white p-2 rounded border border-slate-100">💻 <b>مدير تنفيذ البرامج:</b> s_yehia@rctws.com <br> > <b>منسق (أ.إيناس لطفي):</b> e_lotfy@rctws.com</p>
-                    <p class="bg-white p-2 rounded border border-slate-100">🛡️ <b>مدير الأمن:</b> s_abdelal@rctws.com <br> > <b>فرد أمن (أ.كمال):</b> k_mohamed@rctws.com</p>
-                    <p class="bg-white p-2 rounded border border-slate-100">👥 <b>مدير الموارد البشرية:</b> h_shousha@rctws.com <br> > <b>موظف (أ.صباح):</b> s_abouelyazeed@rctws.com</p>
-                    <p class="bg-white p-2 rounded border border-slate-100">🏢 <b>مدير شئون المقر:</b> m_samy@rctws.com <br> > <b>موظف (أ.أحمد نبيل IT):</b> a_nabil@rctws.com</p>
+                
+                <div class="mt-6 pt-4 border-t border-slate-200 text-center">
+                    <p class="text-xs text-rose-600 font-bold">ملاحظة: إذا كنت تقوم بإعداد النظام لأول مرة وتم مسح القاعدة، استخدم حساب الأدمن فقط لرفع ملف الإكسيل لإضافة باقي الموظفين.</p>
                 </div>
             </div>
         </div>
@@ -133,7 +126,6 @@
             <!-- ================= أولاً: لوحة الموظف ================= -->
             <div id="employee-dashboard" class="hidden flex-col gap-6 fade-in">
                 
-                <!-- سجل الحضور والانصراف (المرتبط بالراتب المتغير) -->
                 <div class="glass-card p-6 border-t-4 border-t-rctws-secondary">
                     <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                         <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2"><span>⏱️</span> تسجيل الحضور والانصراف اليومي</h3>
@@ -168,17 +160,14 @@
                     </div>
                 </div>
 
-                <!-- تفاصيل الراتب (أساسي ومتغير) حسب قوانين المالية -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="glass-card p-5 border-b-4 border-slate-400 text-center">
                         <span class="text-xs text-slate-500 font-black block mb-2">الراتب الأساسي (ثابت)</span>
                         <span class="text-2xl font-black text-slate-700" id="ui-emp-base-salary">0</span> <span class="text-xs font-bold text-slate-500">ج.م</span>
-                        <p class="text-[10px] text-slate-400 mt-1 font-bold">لا يتأثر بالتقييم</p>
                     </div>
                     <div class="glass-card p-5 border-b-4 border-rctws-accent text-center bg-yellow-50/30">
                         <span class="text-xs text-rctws-primary font-black block mb-2">الحافز المتغير (الحد الأقصى)</span>
                         <span class="text-2xl font-black text-rctws-accent" id="ui-emp-variable-salary">0</span> <span class="text-xs font-bold text-slate-500">ج.م</span>
-                        <p class="text-[10px] text-slate-500 mt-1 font-bold">يُصرف بناءً على نسبة إنجاز المهام والحضور</p>
                     </div>
                     <div class="glass-card p-5 border-b-4 border-emerald-500 text-center bg-emerald-50/50">
                         <span class="text-xs text-emerald-800 font-black block mb-2">إجمالي الراتب المستحق (أساسي + متغير)</span>
@@ -205,7 +194,7 @@
                     <h3 class="font-black text-rctws-primary text-lg mb-4">تقرير إنجاز المهمة</h3>
                     <p class="text-xs text-slate-500 font-bold mb-4">يرجى كتابة ما تم إنجازه اليوم بخصوص هذه المهمة ليتمكن المدير من تقييمك بدقة.</p>
                     <input type="hidden" id="complete-task-id">
-                    <textarea id="task-completion-note" rows="4" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 mb-4" placeholder="مثال: قمت بصياغة العقد ومراجعته مع الإدارة المالية وتم إرساله بالبريد..."></textarea>
+                    <textarea id="task-completion-note" rows="4" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 mb-4" placeholder="مثال: قمت بصياغة العقد ومراجعته..."></textarea>
                     <div class="flex gap-3">
                         <button onclick="confirmTaskCompletion()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 rounded-xl shadow-md transition">تأكيد التسليم</button>
                         <button onclick="closeCompletionModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-black py-3 rounded-xl transition">إلغاء</button>
@@ -216,7 +205,6 @@
             <!-- ================= ثانياً: لوحة المدير المباشر ================= -->
             <div id="manager-dashboard" class="hidden flex-col gap-6 fade-in">
                 
-                <!-- تقييم الحضور والانصراف -->
                 <div class="glass-card overflow-hidden shadow-sm">
                     <div class="bg-rctws-primary px-6 py-4 border-b border-rctws-primary flex items-center justify-between text-white">
                         <div class="flex items-center gap-2">
@@ -224,9 +212,6 @@
                             <h3 class="font-black text-lg">سجل وتقييم الحضور والانصراف للإدارة</h3>
                         </div>
                         <span class="text-xs bg-white/20 px-3 py-1 rounded-lg font-bold" id="mgr-today-date"></span>
-                    </div>
-                    <div class="p-4 bg-yellow-50/50 border-b border-yellow-100 text-xs font-bold text-yellow-800">
-                        ملاحظة: تقييم الحضور يمثل <b>20%</b> من إجمالي الحافز المتغير للموظف تلقائياً. يرجى التقييم من 100 لليوم الحالي.
                     </div>
                     <div class="overflow-x-auto p-4">
                         <table class="w-full text-right border-collapse text-sm">
@@ -244,14 +229,12 @@
                     </div>
                 </div>
 
-                <!-- إسناد المهام (مربوطة بنسبة 80% من الحافز) -->
                 <div class="glass-card p-6 shadow-sm" id="manager-assign-area">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-100 pb-4 gap-4">
                         <div class="flex items-center gap-3">
                             <div class="bg-rctws-accent/20 p-2 rounded-lg text-rctws-accent text-xl">🎯</div>
                             <div>
                                 <h3 class="text-xl font-black text-rctws-primary">إسناد المهام الدورية للفريق</h3>
-                                <p class="text-xs font-bold text-slate-500 mt-1">المهام تمثل 80% من قيمة الحافز المتغير للموظف. (قائمة المهام مأخوذة من الهيكل الإداري)</p>
                             </div>
                         </div>
                     </div>
@@ -372,7 +355,6 @@
                         <span class="text-2xl">⚖️</span>
                         <div>
                             <h3 class="font-black text-rose-900 text-lg">تظلمات وشكاوى الموظفين</h3>
-                            <p class="text-[11px] font-bold text-rose-700 mt-0.5">صلاحية حصرية لرئيس المركز للبت في شكاوى التقييم المالي والأداء.</p>
                         </div>
                     </div>
                     <div class="overflow-x-auto p-4">
@@ -397,12 +379,31 @@
                             <div class="bg-rctws-secondary/10 p-2 rounded-lg text-rctws-secondary text-xl">👥</div>
                             <div>
                                 <h3 class="text-xl font-black text-rctws-primary">إدارة الهيكل الوظيفي والمستخدمين</h3>
-                                <p class="text-[11px] text-slate-500 font-bold mt-1">يحتوي النظام على قائمة مفلترة ومدمجة بالبيانات الحقيقية للعاملين بالمركز.</p>
+                                <p class="text-[11px] text-slate-500 font-bold mt-1">يمكنك إضافة مستخدمين فردياً أو تحميلهم دفعة واحدة عبر ملف Excel.</p>
                             </div>
                         </div>
-                        <button onclick="openCreateUserModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-lg text-sm shadow-md transition flex items-center gap-2">
-                            <span>➕</span> إضافة مستخدم جديد بـ Firebase
-                        </button>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <button onclick="downloadExcelTemplate()" class="bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-black px-4 py-2 rounded-lg text-sm shadow-sm transition flex items-center gap-2">
+                                <span>📥</span> تحميل قالب Excel
+                            </button>
+                            <label class="bg-rctws-secondary hover:bg-rctws-primary text-white font-black px-4 py-2 rounded-lg text-sm shadow-md transition flex items-center gap-2 cursor-pointer">
+                                <span>📤</span> رفع ملف Excel للفايربيز
+                                <input type="file" id="excel-upload-input" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="hidden" onchange="handleExcelUpload(event)">
+                            </label>
+                            <button onclick="openCreateUserModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-lg text-sm shadow-md transition flex items-center gap-2">
+                                <span>➕</span> مستخدم فردي
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="upload-progress-container" class="mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-black text-slate-600">جاري إنشاء الحسابات في خوادم Firebase...</span>
+                            <span id="upload-progress-text" class="text-xs font-bold text-rctws-primary">0 / 0</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-3">
+                            <div id="upload-progress-bar" class="bg-emerald-500 h-3 rounded-full"></div>
+                        </div>
                     </div>
                     
                     <div class="overflow-x-auto">
@@ -413,8 +414,7 @@
                                     <th class="p-4">البريد الإلكتروني</th>
                                     <th class="p-4">الدور والإدارة</th>
                                     <th class="p-4 text-center">الراتب الأساسي</th>
-                                    <th class="p-4 text-center">الحافز المتغير</th>
-                                    <th class="p-4 text-center">الإجراءات</th>
+                                    <th class="p-4 text-center">الإجراءات والتقييم</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-users-table-body" class="divide-y divide-slate-100"></tbody>
@@ -450,14 +450,49 @@
 
     <!-- نوافذ منبثقة (Modals) -->
 
+    <!-- نافذة داشبورد المستخدم (KPIs) من منظور الأدمن -->
+    <div id="user-kpi-modal" class="hidden fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm overflow-y-auto">
+        <div class="glass-card p-6 w-full max-w-4xl relative bg-white my-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+                <div>
+                    <h3 class="font-black text-rctws-primary text-2xl flex items-center gap-3">
+                        <span class="bg-rctws-secondary text-white w-10 h-10 flex items-center justify-center rounded-xl">👤</span>
+                        <span id="kpi-user-name">اسم الموظف</span>
+                    </h3>
+                    <p class="text-sm font-bold text-slate-500 mt-2" id="kpi-user-details">البريد | الدور | الإدارة | المدير</p>
+                </div>
+                <button onclick="document.getElementById('user-kpi-modal').classList.add('hidden')" class="bg-slate-100 hover:bg-slate-200 text-slate-500 w-10 h-10 flex items-center justify-center rounded-full font-black transition">✖</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                    <span class="text-xs font-black text-slate-500 block mb-1">الراتب الأساسي</span>
+                    <span class="text-xl font-black text-slate-800" id="kpi-base-salary">0</span> <span class="text-[10px] font-bold text-slate-400">ج.م</span>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                    <span class="text-xs font-black text-slate-500 block mb-1">الحافز المتغير (الحد الأقصى)</span>
+                    <span class="text-xl font-black text-rctws-accent" id="kpi-var-salary">0</span> <span class="text-[10px] font-bold text-slate-400">ج.م</span>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                    <span class="text-xs font-black text-slate-500 block mb-1">المهام المسندة الكلية</span>
+                    <span class="text-2xl font-black text-sky-600" id="kpi-total-tasks">0</span>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center shadow-inner">
+                    <span class="text-xs font-black text-emerald-800 block mb-1">متوسط التقييم العام (KPI)</span>
+                    <span class="text-3xl font-black text-emerald-600" id="kpi-avg-score">0%</span>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="openEditUserFromKpi()" class="bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 px-6 rounded-xl shadow-md transition w-full md:w-auto">تعديل بيانات وراتب الموظف</button>
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة إضافة مستخدم جديد بـ Firebase -->
     <div id="create-user-modal" class="hidden fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm">
         <div class="glass-card p-8 w-full max-w-lg relative bg-white">
-            <h3 class="font-black text-rctws-primary text-xl mb-2 flex items-center gap-2"><span>➕</span> إضافة مستخدم جديد</h3>
-            <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-[10px] font-bold text-amber-800 mb-4 leading-relaxed">
-                ⚠️ <b>ملاحظة هامة (قيد Firebase الأمني):</b> لأن إنشاء حساب حقيقي يتطلب مصادقة الواجهة الأمامية، سيقوم النظام بإنشاء الحساب في سيرفرات Firebase ثم <b>تسجيل خروجك تلقائياً</b>. ستحتاج لتسجيل الدخول مرة أخرى بحسابك (الأدمن).
-            </div>
-            
+            <h3 class="font-black text-rctws-primary text-xl mb-6 flex items-center gap-2 border-b pb-3"><span>➕</span> إضافة مستخدم مفرد</h3>
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="col-span-2">
                     <label class="block text-xs font-black text-slate-500 mb-1">الاسم الرباعي</label>
@@ -473,26 +508,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-black text-slate-500 mb-1">الإدارة التابع لها</label>
-                    <select id="new-user-dept" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50">
-                        <option value="الإدارة العليا">الإدارة العليا</option>
-                        <option value="المكتب الفني">المكتب الفني</option>
-                        <option value="الشئون القانونية">الشئون القانونية</option>
-                        <option value="المحفوظات">المحفوظات</option>
-                        <option value="المعامل">المعامل</option>
-                        <option value="التخطيط والمتابعة">التخطيط والمتابعة</option>
-                        <option value="الحسابات">الحسابات</option>
-                        <option value="الموارد البشرية">الموارد البشرية</option>
-                        <option value="إدارة المراسم">إدارة المراسم</option>
-                        <option value="العلاقات العامة">العلاقات العامة</option>
-                        <option value="تنفيذ البرامج">تنفيذ البرامج</option>
-                        <option value="التدريب الطلابي">التدريب الطلابي</option>
-                        <option value="شئون المقر">شئون المقر</option>
-                        <option value="تكنولوجيا المعلومات">تكنولوجيا المعلومات</option>
-                        <option value="إدارة السيارات">إدارة السيارات</option>
-                        <option value="الحدائق والبساتين">الحدائق والبساتين</option>
-                        <option value="الأمن">الأمن</option>
-                        <option value="الفروع الخارجية">الفروع الخارجية</option>
-                    </select>
+                    <input type="text" id="new-user-dept" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50" placeholder="مثال: الشئون القانونية">
                 </div>
                 <div>
                     <label class="block text-xs font-black text-slate-500 mb-1">الدور الوظيفي</label>
@@ -516,7 +532,7 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-6">
-                <button id="btn-submit-create-user" class="flex-1 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 rounded-xl transition shadow">إنشاء الحساب</button>
+                <button id="btn-submit-create-user" class="flex-1 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 rounded-xl transition shadow">إنشاء في Firebase</button>
                 <button onclick="document.getElementById('create-user-modal').classList.add('hidden')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black py-3 rounded-xl transition">إلغاء</button>
             </div>
         </div>
@@ -569,6 +585,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
+        // Primary App
         const firebaseConfig = {
             apiKey: "AIzaSyCyTasPs776gFXXIxIVs4UPn19gYq4BGZ0",
             authDomain: "rctws-6cf4a.firebaseapp.com",
@@ -578,91 +595,59 @@
             appId: "1:724193361922:web:cc65813b07f077a663e71b",
             measurementId: "G-WCLP61V0SH"
         };
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // تم تغيير الـ prefix لضمان عمل Seed جديد للقاعدة الشاملة
-        const DB_PREFIX = 'rctws_erp_full_v2_'; 
+        // Secondary App for Bulk Upload (Prevents logging out the Admin)
+        const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+        const secondaryAuth = getAuth(secondaryApp);
+
+        // Database Init
+        const DB_PREFIX = 'rctws_erp_final_v1_'; 
         let currentUser = null, users = [], tasks = [], templates = [], systemDate = '', attendanceLogs = [];
 
         const DB = {
             get: (key) => { const data = localStorage.getItem(`${DB_PREFIX}${key}`); return data ? JSON.parse(data) : null; },
             set: (key, val) => { localStorage.setItem(`${DB_PREFIX}${key}`, JSON.stringify(val)); },
             seed: () => {
-                // تجميع وفرز وتخصيص رواتب لجميع الإدارات الرئيسية والموظفين المستخرجين من الملفات
+                // قاعدة بيانات فارغة ليقوم الأدمن بملئها عبر الإكسيل
+                // سنضع حساب الأدمن فقط لضمان قدرته على الدخول ورفع الملف
                 const defaultUsers = [
-                    { id: 'admin1', email: 'admin@rctws.com', name: 'أ.د سلوى أبو العلا (رئيس المركز)', role: 'admin', department: 'الإدارة العليا', baseSalary: 20000, variableSalary: 15000 },
-                    
-                    // المديرين
-                    { id: 'm_legal', email: 'b_morsi@rctws.com', name: 'أ. بخيت السيد مرسي', role: 'manager', department: 'الشئون القانونية', baseSalary: 7000, variableSalary: 5000 },
-                    { id: 'm_arch', email: 'h_fawzy@rctws.com', name: 'أ. هالة فوزي', role: 'manager', department: 'المحفوظات', baseSalary: 6000, variableSalary: 4000 },
-                    { id: 'm_lab', email: 'i_helmy@rctws.com', name: 'م.ز/ إيمان حلمي', role: 'manager', department: 'المعامل', baseSalary: 6500, variableSalary: 4500 },
-                    { id: 'm_plan', email: 'm_taher@rctws.com', name: 'م.ز/ مروة طاهر', role: 'manager', department: 'التخطيط والمتابعة', baseSalary: 8000, variableSalary: 6000 },
-                    { id: 'm_acc', email: 'a_qasem@rctws.com', name: 'أ. عادل عبد القادر', role: 'manager', department: 'الحسابات', baseSalary: 8000, variableSalary: 6000 },
-                    { id: 'm_hr', email: 'h_shousha@rctws.com', name: 'أ. حنان مصطفى أبو شوشة', role: 'manager', department: 'الموارد البشرية', baseSalary: 8000, variableSalary: 6000 },
-                    { id: 'm_pr', email: 'h_youssef@rctws.com', name: 'أ. هند يوسف', role: 'manager', department: 'العلاقات العامة', baseSalary: 7000, variableSalary: 5000 },
-                    { id: 'm_prog', email: 's_yehia@rctws.com', name: 'م/ سحر يحيى', role: 'manager', department: 'تنفيذ البرامج', baseSalary: 7500, variableSalary: 5000 },
-                    { id: 'm_hq', email: 'm_samy@rctws.com', name: 'م/ منى سامي', role: 'manager', department: 'شئون المقر', baseSalary: 7500, variableSalary: 5000 },
-                    { id: 'm_cars', email: 'r_mohy@rctws.com', name: 'أ. ريهام محى', role: 'manager', department: 'إدارة السيارات', baseSalary: 6000, variableSalary: 4000 },
-                    { id: 'm_agri', email: 'a_gamal@rctws.com', name: 'د.ز/ احمد جمال الدين', role: 'manager', department: 'الحدائق والبساتين', baseSalary: 6500, variableSalary: 4500 },
-                    { id: 'm_sec', email: 's_abdelal@rctws.com', name: 'أ. شعبان عبدالعال', role: 'manager', department: 'الأمن', baseSalary: 6000, variableSalary: 4000 },
-
-                    // الموظفين الممثلين
-                    { id: 'e_leg1', email: 'h_fathy@rctws.com', name: 'أ. هبه فتحي حامد', role: 'employee', managerId: 'm_legal', department: 'الشئون القانونية', baseSalary: 4500, variableSalary: 3500 },
-                    { id: 'e_leg2', email: 'e_hassan@rctws.com', name: 'أ. صابر إبراهيم رفاعي', role: 'employee', managerId: 'm_legal', department: 'الشئون القانونية', baseSalary: 4000, variableSalary: 3000 },
-                    { id: 'e_arc1', email: 'm_adel@rctws.com', name: 'أ. محمد عادل', role: 'employee', managerId: 'm_arch', department: 'المحفوظات', baseSalary: 3500, variableSalary: 2500 },
-                    { id: 'e_pln1', email: 'a_mostafa@rctws.com', name: 'م.ز/ اسماء مصطفى', role: 'employee', managerId: 'm_plan', department: 'التخطيط والمتابعة', baseSalary: 5000, variableSalary: 4000 },
-                    { id: 'e_pln2', email: 's_abdelalim@rctws.com', name: 'م.ز/ سندس عبد العليم', role: 'employee', managerId: 'm_plan', department: 'التخطيط والمتابعة', baseSalary: 5000, variableSalary: 4000 },
-                    { id: 'e_acc1', email: 's_abdelhamid@rctws.com', name: 'أ. سمير عبد الحميد', role: 'employee', managerId: 'm_acc', department: 'الحسابات', baseSalary: 5000, variableSalary: 4000 },
-                    { id: 'e_acc2', email: 'a_ibrahim@rctws.com', name: 'أ. أماني علي', role: 'employee', managerId: 'm_acc', department: 'الحسابات', baseSalary: 5000, variableSalary: 4000 },
-                    { id: 'e_hr1', email: 's_abouelyazeed@rctws.com', name: 'أ. صباح أحمد أبو اليزيد', role: 'employee', managerId: 'm_hr', department: 'الموارد البشرية', baseSalary: 5000, variableSalary: 3500 },
-                    { id: 'e_hr2', email: 'm_elhussiny@rctws.com', name: 'أ. منال محمود الحسينى', role: 'employee', managerId: 'm_hr', department: 'الموارد البشرية', baseSalary: 5000, variableSalary: 3500 },
-                    { id: 'e_pr1', email: 's_youssef@rctws.com', name: 'أ. سارة يوسف', role: 'employee', managerId: 'm_pr', department: 'العلاقات العامة', baseSalary: 4500, variableSalary: 3500 },
-                    { id: 'e_prog1', email: 'e_lotfy@rctws.com', name: 'أ. إيناس لطفي', role: 'employee', managerId: 'm_prog', department: 'تنفيذ البرامج', baseSalary: 4500, variableSalary: 3500 },
-                    { id: 'e_hq1', email: 'a_nabil@rctws.com', name: 'أ. أحمد نبيل (IT)', role: 'employee', managerId: 'm_hq', department: 'تكنولوجيا المعلومات', baseSalary: 4500, variableSalary: 3500 },
-                    { id: 'e_car1', email: 'h_salem@rctws.com', name: 'أ. حازم محمد سالم', role: 'employee', managerId: 'm_cars', department: 'إدارة السيارات', baseSalary: 3500, variableSalary: 2500 },
-                    { id: 'e_agr1', email: 'y_farouk@rctws.com', name: 'أ. يحي فاروق', role: 'employee', managerId: 'm_agri', department: 'الحدائق والبساتين', baseSalary: 3000, variableSalary: 2000 },
-                    { id: 'e_sec1', email: 'k_mohamed@rctws.com', name: 'أ. كمال محمد', role: 'employee', managerId: 'm_sec', department: 'الأمن', baseSalary: 3000, variableSalary: 2000 }
+                    { id: 'admin_master', email: 'admin@rctws.com', name: 'رئيس المركز (إدارة عليا)', role: 'admin', department: 'الإدارة العليا', baseSalary: 20000, variableSalary: 15000 }
                 ];
-
-                // مكتبة المهام الشاملة المستخرجة
                 const defaultTemplates = [
-                    { id: 'tpl_1', title: 'دراسة ومراجعة العقود وإبداء الرأي (قانونية)' },
-                    { id: 'tpl_2', title: 'التحقيق في المذكرات الواردة والرد عليها' },
-                    { id: 'tpl_3', title: 'حضور لجان الفتح الفني والمالي' },
-                    { id: 'tpl_4', title: 'استلام وتصوير وتوزيع البوسطة الواردة' },
+                    { id: 'tpl_1', title: 'دراسة ومراجعة العقود وإبداء الرأي' },
+                    { id: 'tpl_2', title: 'حضور لجان الفتح الفني والمالي والاستفسارات' },
+                    { id: 'tpl_3', title: 'التحقيق في المذكرات الواردة والرد على الدعاوى' },
+                    { id: 'tpl_4', title: 'استلام البوسطة الواردة وتصويرها وتوزيعها' },
                     { id: 'tpl_5', title: 'أرشفة المستندات وعمل مسح ضوئي' },
-                    { id: 'tpl_6', title: 'صيانة ونظافة المعمل وتحضير الأجهزة للتجارب' },
-                    { id: 'tpl_7', title: 'تصميم كتيب خطة البرامج ودليل البرامج' },
-                    { id: 'tpl_8', title: 'إعداد تقارير الإنجاز الدورية (شهرية/ربع سنوية)' },
-                    { id: 'tpl_9', title: 'تنفيذ أعمال قياس أثر التدريب للبرامج' },
-                    { id: 'tpl_10', title: 'الإعداد لملف الأيزو ونظام الجودة' },
-                    { id: 'tpl_11', title: 'مراجعة مستندات الصرف لجميع الأبواب' },
-                    { id: 'tpl_12', title: 'القيد بدفاتر الوحدة الحسابية والتسويات البنكية' },
-                    { id: 'tpl_13', title: 'إنشاء أوامر الدفع الإلكترونية (GFMIS)' },
-                    { id: 'tpl_14', title: 'مراجعة المرتبات والمكافآت (Payroll)' },
-                    { id: 'tpl_15', title: 'متابعة مستحقات باب ثان وتحرير الأوامر الإدارية' },
-                    { id: 'tpl_16', title: 'متابعة البصمة وتحويلها لتأخيرات وإجازات' },
-                    { id: 'tpl_17', title: 'استقبال الوفود وتنسيق الإقامة والمراسم' },
-                    { id: 'tpl_18', title: 'الإشراف على أعمال لجنة المطعم والتفتيش' },
-                    { id: 'tpl_19', title: 'إدارة دورات التحول الرقمي وإنشاء روابط Zoom' },
-                    { id: 'tpl_20', title: 'متابعة الكشوف الورقية والفنادق للبرامج الفعلية' },
-                    { id: 'tpl_21', title: 'استيفاء واعتماد المستندات المالية والتقرير الختامي' },
-                    { id: 'tpl_22', title: 'تقديم الدعم الفني لأجهزة الكمبيوتر والشبكة' },
-                    { id: 'tpl_23', title: 'متابعة الصيانة والأعمال المدنية للمبنى والفنادق' },
-                    { id: 'tpl_24', title: 'متابعة أوامر التشغيل وصيانة السيارات والكروت' },
-                    { id: 'tpl_25', title: 'صيانة المسطحات الخضراء ومشتل القطاع' },
-                    { id: 'tpl_26', title: 'تأمين المركز والمرور على طفايات الحريق والكاميرات' },
-                    { id: 'tpl_27', title: 'تسجيل دخول وخروج المتدربين والزائرين' }
+                    { id: 'tpl_6', title: 'تنظيم المعمل وتحضير الأجهزة للتجارب' },
+                    { id: 'tpl_7', title: 'الصيانة الدورية والوقائية للأجهزة' },
+                    { id: 'tpl_8', title: 'تنظيم دخول وخروج السيارات وتفتيشها' },
+                    { id: 'tpl_9', title: 'تسجيل حضور وانصراف موظفين المركز' },
+                    { id: 'tpl_10', title: 'المرور الدائم لتأمين المركز وطفايات الحريق' },
+                    { id: 'tpl_11', title: 'إعداد تقارير الإنجاز الشهرية والربع سنوية' },
+                    { id: 'tpl_12', title: 'تصميم كتيب خطة البرامج ودليل البرامج' },
+                    { id: 'tpl_13', title: 'تنفيذ أعمال قياس أثر التدريب للبرامج' },
+                    { id: 'tpl_14', title: 'الإعداد الشامل لملف الأيزو ونظام الجودة' },
+                    { id: 'tpl_15', title: 'مراجعة مستندات الصرف لجميع الأبواب الموازنية' },
+                    { id: 'tpl_16', title: 'إعداد الخطة الشهرية للتدفقات النقدية' },
+                    { id: 'tpl_17', title: 'إنشاء أوامر الدفع الإلكترونية (GFMIS)' },
+                    { id: 'tpl_18', title: 'مراجعة المرتبات والمكافآت (Payroll)' },
+                    { id: 'tpl_19', title: 'متابعة البصمة وتحويلها لساعات وتأخيرات' },
+                    { id: 'tpl_20', title: 'تحرير المذكرات والأوامر الإدارية والقرارات' },
+                    { id: 'tpl_21', title: 'متابعة صيانة وتشغيل التكييف المركزي والمولدات' },
+                    { id: 'tpl_22', title: 'الإشراف على الأعمال المدنية ورفع كفاءة الفنادق' },
+                    { id: 'tpl_23', title: 'تقديم الدعم الفني لأجهزة الكمبيوتر والشبكة' },
+                    { id: 'tpl_24', title: 'متابعة تراخيص سيارات المركز وأوامر التشغيل' },
+                    { id: 'tpl_25', title: 'تنسيق المراسم واستخراج التصاريح وحجز الفنادق' },
+                    { id: 'tpl_26', title: 'تجهيز القاعات وإعداد جداول التشغيل للبرامج' },
+                    { id: 'tpl_27', title: 'إدارة الروابط وتوثيق الحضور لدورات التحول الرقمي' },
+                    { id: 'tpl_28', title: 'صيانة وتنسيق الأشجار والمسطحات الخضراء' }
                 ];
-
                 DB.set('users', defaultUsers); DB.set('templates', defaultTemplates); DB.set('tasks', []); 
-                const d = new Date();
-                if(d.getDay() === 5) d.setDate(d.getDate() + 2);
-                if(d.getDay() === 6) d.setDate(d.getDate() + 1);
-                DB.set('simDate', d.toISOString().split('T')[0]); 
-                DB.set('attendance', []);
+                const d = new Date(); if(d.getDay() === 5) d.setDate(d.getDate() + 2); if(d.getDay() === 6) d.setDate(d.getDate() + 1);
+                DB.set('simDate', d.toISOString().split('T')[0]); DB.set('attendance', []);
             }
         };
 
@@ -785,7 +770,7 @@
             
             // إدارة عطلة نهاية الأسبوع
             const dayOfWeek = new Date(systemDate).getDay();
-            const isWeekend = (dayOfWeek === 5 || dayOfWeek === 6); // 5 Friday, 6 Saturday
+            const isWeekend = (dayOfWeek === 5 || dayOfWeek === 6); 
             
             document.getElementById('today-date-display').innerText = systemDate;
             const btnIn = document.getElementById('btn-check-in'), btnOut = document.getElementById('btn-check-out'), btnLeave = document.getElementById('btn-leave'), logMsg = document.getElementById('attendance-log-msg');
@@ -864,16 +849,12 @@
                     </div>`;
             });
 
-            // حساب الراتب بناءً على وزارة المالية
             document.getElementById('ui-emp-base-salary').innerText = currentUser.baseSalary.toLocaleString();
             document.getElementById('ui-emp-variable-salary').innerText = currentUser.variableSalary.toLocaleString();
 
             const pendingExist = myTasks.some(t => ['pending', 'completed'].includes(t.status));
-            
-            // لحساب التقييم النهائي، نفرض أن المهام تمثل 80% من الحافز، والحضور 20%
             let finalEvalPercent = tasksScorePercent; 
             
-            // تفعيل قاعدة الـ 90% للحافز المتغير
             if (finalEvalPercent >= 90 && !pendingExist) {
                 finalEvalPercent = 100;
                 document.getElementById('emp-salary-note').classList.remove('hidden');
@@ -927,7 +908,6 @@
         window.renderManagerDashboard = () => {
             const dash = document.getElementById('manager-dashboard'); dash.classList.remove('hidden'); dash.classList.add('flex');
             
-            // 1. تقييم الحضور
             document.getElementById('mgr-today-date').innerText = systemDate;
             const attBody = document.getElementById('manager-attendance-body'); attBody.innerHTML = '';
             const myTeamIds = users.filter(u => u.managerId === currentUser.id).map(u => u.id);
@@ -942,17 +922,11 @@
                     let status = "لم يحضر", timeIn = "-", timeOut = "-", evalHtml = "";
                     if(log) {
                         timeIn = log.checkIn || "-"; timeOut = log.checkOut || "-";
-                        if(log.status !== 'حضور') {
-                            status = `<span class="text-sky-600 font-bold">${log.status}</span>`;
-                        } else {
-                            status = `<span class="text-slate-600 font-bold">متواجد</span>`;
-                        }
+                        if(log.status !== 'حضور') status = `<span class="text-sky-600 font-bold">${log.status}</span>`;
+                        else status = `<span class="text-slate-600 font-bold">متواجد</span>`;
 
-                        if(log.managerEval !== null) {
-                            evalHtml = `<span class="text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded">قُيمت: ${log.managerEval}%</span>`;
-                        } else {
-                            evalHtml = `<div class="flex gap-1 justify-center"><input type="number" id="eval-att-${empId}" class="w-14 border border-slate-300 rounded p-1 text-center text-xs" placeholder="%"><button onclick="evaluateAttendance('${empId}')" class="bg-rctws-primary text-white px-2 py-1 rounded text-[10px]">حفظ</button></div>`;
-                        }
+                        if(log.managerEval !== null) evalHtml = `<span class="text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded">قُيمت: ${log.managerEval}%</span>`;
+                        else evalHtml = `<div class="flex gap-1 justify-center"><input type="number" id="eval-att-${empId}" class="w-14 border border-slate-300 rounded p-1 text-center text-xs" placeholder="%"><button onclick="evaluateAttendance('${empId}')" class="bg-rctws-primary text-white px-2 py-1 rounded text-[10px]">حفظ</button></div>`;
                     } else {
                         status = `<span class="text-rose-600 font-bold">غياب بدون عذر</span>`;
                         evalHtml = `<button onclick="evaluateAttendance('${empId}', 0)" class="bg-rose-500 text-white px-2 py-1 rounded text-[10px] w-full">خصم اليوم (0%)</button>`;
@@ -962,7 +936,6 @@
                 });
             }
 
-            // 2. إسناد المهام
             const empSelect = document.getElementById('assign-employee-select'); empSelect.innerHTML = '<option value="">-- اختر الموظف --</option>';
             myTeamIds.forEach(id => { const emp = users.find(u=>u.id===id); empSelect.innerHTML += `<option value="${emp.id}">${emp.name}</option>`; });
             
@@ -972,7 +945,6 @@
             empSelect.removeEventListener('change', checkManagerWeights); empSelect.addEventListener('change', checkManagerWeights);
             document.getElementById('assign-weight-input').removeEventListener('input', checkManagerWeights); document.getElementById('assign-weight-input').addEventListener('input', checkManagerWeights);
 
-            // 3. تقييم المهام والاطلاع على تقارير الموظفين
             const teamTasks = tasks.filter(t => t.managerId === currentUser.id);
             const tbody = document.getElementById('manager-team-table-body'); tbody.innerHTML = '';
             
@@ -982,25 +954,17 @@
                 const targetEmp = users.find(u => u.id === task.employeeId);
                 let actionHtml = '';
 
-                if (task.locked) {
-                    actionHtml = `<span class="text-rose-600 text-xs font-black">قُيمت بـ 0 (تأخير)</span>`;
-                } else if (task.status === 'completed') {
-                    actionHtml = `<div class="flex items-center justify-center gap-1"><input type="number" id="eval-val-${task.id}" min="0" max="100" class="w-14 border border-emerald-300 rounded p-1 text-center font-bold text-xs"><button onclick="submitTaskEvaluation('${task.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-2 py-1.5 rounded text-[10px] shadow">اعتماد</button></div>`;
-                } else if (task.status === 'evaluated') {
-                    actionHtml = `<span class="text-emerald-600 font-black bg-emerald-50 px-3 py-1 rounded-lg">${task.evaluation}%</span>`;
-                } else {
-                    actionHtml = `<span class="text-slate-400 text-[10px] font-bold border border-slate-200 px-2 py-1 rounded">لم يُسلم بعد</span>`;
-                }
+                if (task.locked) actionHtml = `<span class="text-rose-600 text-xs font-black">قُيمت بـ 0 (تأخير)</span>`;
+                else if (task.status === 'completed') actionHtml = `<div class="flex items-center justify-center gap-1"><input type="number" id="eval-val-${task.id}" min="0" max="100" class="w-14 border border-emerald-300 rounded p-1 text-center font-bold text-xs"><button onclick="submitTaskEvaluation('${task.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-2 py-1.5 rounded text-[10px] shadow">اعتماد</button></div>`;
+                else if (task.status === 'evaluated') actionHtml = `<span class="text-emerald-600 font-black bg-emerald-50 px-3 py-1 rounded-lg">${task.evaluation}%</span>`;
+                else actionHtml = `<span class="text-slate-400 text-[10px] font-bold border border-slate-200 px-2 py-1 rounded">لم يُسلم بعد</span>`;
 
                 const empNoteDisplay = task.empNote ? `<div class="text-[10px] text-slate-600 bg-white border border-slate-200 p-2 rounded mt-1 shadow-inner leading-relaxed">📝 ${task.empNote}</div>` : '<span class="text-slate-300 text-xs">-</span>';
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-100">
                         <td class="p-4 font-black text-rctws-primary">${targetEmp ? targetEmp.name : '-'}</td>
-                        <td class="p-4 text-xs font-bold text-slate-700">
-                            ${task.title}
-                            <span class="block text-[10px] text-rctws-accent mt-0.5">موعد: ${task.deadline}</span>
-                        </td>
+                        <td class="p-4 text-xs font-bold text-slate-700">${task.title}<span class="block text-[10px] text-rctws-accent mt-0.5">موعد: ${task.deadline}</span></td>
                         <td class="p-4">${empNoteDisplay}</td>
                         <td class="p-4 text-center font-black">${task.weight}%</td>
                         <td class="p-4 text-xs font-bold">${task.status === 'completed' ? '<span class="text-sky-600">سلم التقرير</span>' : (task.status === 'evaluated' || task.locked ? 'منتهية' : 'جاري العمل')}</td>
@@ -1090,7 +1054,6 @@
         window.renderAdminDashboard = () => {
             const dash = document.getElementById('admin-dashboard'); dash.classList.remove('hidden'); dash.classList.add('flex');
             
-            // التظلمات
             const compBody = document.getElementById('admin-complaints-body'); compBody.innerHTML = '';
             const complaints = tasks.filter(t => t.complaint !== null);
             
@@ -1109,7 +1072,7 @@
                             <td class="p-3 text-center">
                                 <div class="flex gap-2 justify-center flex-wrap">
                                     <button onclick="adminResolveComplaint('${t.id}', true)" class="bg-slate-800 hover:bg-black text-white px-3 py-2 rounded text-[10px] font-bold shadow-md">رفض التظلم وتأييد المدير</button>
-                                    <button onclick="adminResolveComplaint('${t.id}', false)" class="bg-rctws-accent hover:bg-yellow-600 text-rctws-primary font-bold px-3 py-2 rounded text-[10px] shadow-md">قبول وإعادة للمدير للتقييم</button>
+                                    <button onclick="adminResolveComplaint('${t.id}', false)" class="bg-rctws-accent hover:bg-yellow-600 text-rctws-primary font-bold px-3 py-2 rounded text-[10px] shadow-md">إعادة للمدير</button>
                                 </div>
                             </td>
                         </tr>`;
@@ -1121,25 +1084,22 @@
             document.getElementById('admin-stat-completed').innerText = completed;
             document.getElementById('admin-stat-progress').style.width = tasks.length ? `${(completed/tasks.length)*100}%` : '0%';
 
-            // المستخدمين
             const usersBody = document.getElementById('admin-users-table-body'); usersBody.innerHTML = '';
             users.forEach(u => {
                 const roleD = u.role === 'admin' ? '<span class="bg-rctws-primary text-rctws-accent px-2 py-1 rounded">إدارة عليا</span>' : (u.role === 'manager' ? '<span class="bg-rctws-secondary text-white px-2 py-1 rounded">مدير إدارة</span>' : 'موظف');
                 usersBody.innerHTML += `
-                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition" onclick="openUserDashboard('${u.id}')">
                         <td class="p-4 font-black text-rctws-primary">${u.name}</td>
                         <td class="p-4 text-xs font-bold text-slate-500">${u.email}</td>
                         <td class="p-4 text-[10px] font-bold">${roleD} <span class="block mt-1 text-slate-400">${u.department}</span></td>
                         <td class="p-4 text-center font-black">${u.baseSalary || 0}</td>
-                        <td class="p-4 text-center font-black text-rctws-accent">${u.variableSalary || 0}</td>
-                        <td class="p-4 text-center flex flex-col gap-2">
-                            <button onclick="openEditUserModal('${u.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-bold">الراتب / الصلاحية</button>
-                            ${u.id !== currentUser.id ? `<button onclick="deleteUser('${u.id}')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-bold w-full">إيقاف / حذف</button>` : ''}
+                        <td class="p-4 text-center flex flex-col gap-2" onclick="event.stopPropagation()">
+                            <button onclick="openUserDashboard('${u.id}')" class="bg-sky-100 hover:bg-sky-200 text-sky-700 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm">لوحة الأداء والتعديل</button>
+                            ${u.id !== currentUser.id ? `<button onclick="deleteUser('${u.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg text-[10px] font-bold">إيقاف / حذف</button>` : ''}
                         </td>
                     </tr>`;
             });
 
-            // تقرير شامل للمهام
             const reportBody = document.getElementById('admin-full-report-table'); reportBody.innerHTML = '';
             tasks.forEach(t => {
                 const emp = users.find(u => u.id === t.employeeId), mgr = users.find(u => u.id === t.managerId);
@@ -1165,17 +1125,157 @@
             }
         };
 
-        // الإيقاف / الحذف اللوجيستي من قاعدة الـ ERP
         window.deleteUser = (userId) => {
-            if(confirm("هل أنت متأكد من إيقاف وحذف هذا المستخدم؟ لن يتمكن من الدخول للمنظومة الإدارية مجدداً حتى لو كان حساب Firebase الخاص به نشطاً.")) {
+            if(confirm("هل أنت متأكد من إيقاف وحذف هذا المستخدم من سجلات النظام؟")) {
                 users = users.filter(u => u.id !== userId);
                 DB.set('users', users);
-                showToast("تم إيقاف وحذف المستخدم من قاعدة بيانات المنظومة.", "🗑️");
+                showToast("تم حذف المستخدم من قاعدة بيانات المنظومة.", "🗑️");
                 renderDashboard();
             }
         };
 
-        // نوافذ التعديل والإنشاء (Admin) بـ Firebase
+        // ================= الإكسيل ومؤشرات الأداء (الجديد كلياً) =================
+        
+        window.openUserDashboard = (userId) => {
+            const u = users.find(x => x.id === userId); if(!u) return;
+            
+            document.getElementById('kpi-user-name').innerText = u.name;
+            const mgr = users.find(m => m.id === u.managerId);
+            const roleTxt = u.role === 'admin' ? 'إدارة عليا' : (u.role === 'manager' ? 'مدير' : 'موظف');
+            document.getElementById('kpi-user-details').innerText = `${u.email} | ${roleTxt} - ${u.department} | ${mgr ? `المدير: ${mgr.name}` : ''}`;
+            
+            document.getElementById('kpi-base-salary').innerText = u.baseSalary || 0;
+            document.getElementById('kpi-var-salary').innerText = u.variableSalary || 0;
+
+            const uTasks = tasks.filter(t => t.employeeId === u.id);
+            document.getElementById('kpi-total-tasks').innerText = uTasks.length;
+
+            let totalEval = 0;
+            let evaluatedCount = 0;
+            uTasks.forEach(t => {
+                if(t.status === 'evaluated' || t.locked) {
+                    totalEval += (t.evaluation || 0);
+                    evaluatedCount++;
+                }
+            });
+
+            const avgScore = evaluatedCount > 0 ? (totalEval / evaluatedCount).toFixed(1) : 0;
+            document.getElementById('kpi-avg-score').innerText = evaluatedCount > 0 ? `${avgScore}%` : 'لم يبدأ التقييم';
+
+            // زر التعديل يحتاج الآي دي
+            document.getElementById('edit-user-id').value = u.id;
+            
+            document.getElementById('user-kpi-modal').classList.remove('hidden');
+        };
+
+        window.openEditUserFromKpi = () => {
+            document.getElementById('user-kpi-modal').classList.add('hidden');
+            const userId = document.getElementById('edit-user-id').value;
+            openEditUserModal(userId);
+        };
+
+        window.downloadExcelTemplate = () => {
+            const data = [
+                { "الاسم": "", "البريد الالكتروني": "", "كلمة المرور": "", "الادارة": "", "الدور (employee/manager/admin)": "employee", "ايميل المدير (اختياري)": "", "الراتب الاساسي": 4000, "الحافز المتغير": 3000 }
+            ];
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+            XLSX.writeFile(workbook, "RCTWS_Users_Template.xlsx");
+        };
+
+        window.handleExcelUpload = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+
+                if(json.length === 0) return showToast("الملف فارغ", "⚠️");
+
+                document.getElementById('upload-progress-container').style.display = 'block';
+                const progressText = document.getElementById('upload-progress-text');
+                const progressBar = document.getElementById('upload-progress-bar');
+                
+                let successCount = 0;
+
+                for (let i = 0; i < json.length; i++) {
+                    const row = json[i];
+                    progressText.innerText = `${i + 1} / ${json.length}`;
+                    progressBar.style.width = `${((i + 1) / json.length) * 100}%`;
+
+                    const email = row["البريد الالكتروني"];
+                    const password = row["كلمة المرور"] ? String(row["كلمة المرور"]) : "123456";
+                    
+                    if(!email || !row["الاسم"]) continue;
+                    
+                    // البحث عن إيميل المدير لاستخراج الـ ID الخاص به
+                    let mgrId = null;
+                    if(row["ايميل المدير (اختياري)"]) {
+                        const mgr = users.find(u => u.email.toLowerCase() === row["ايميل المدير (اختياري)"].toLowerCase());
+                        if(mgr) mgrId = mgr.id;
+                    }
+
+                    try {
+                        // الحيلة: استخدام التطبيق الثانوي لإنشاء المستخدمين في Firebase دون طرد الأدمن
+                        await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                        
+                        // إضافة للقاعدة المحلية
+                        if(!users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                            users.push({
+                                id: 'usr_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                                name: row["الاسم"],
+                                email: email,
+                                role: row["الدور (employee/manager/admin)"] || 'employee',
+                                department: row["الادارة"] || 'أخرى',
+                                managerId: mgrId,
+                                baseSalary: parseFloat(row["الراتب الاساسي"]) || 4000,
+                                variableSalary: parseFloat(row["الحافز المتغير"]) || 3000
+                            });
+                        }
+                        successCount++;
+                    } catch (error) {
+                        console.error(`خطأ في الإيميل ${email}:`, error);
+                        // إذا كان مسجلاً بالفعل في فايربيز، أضفه محلياً على الأقل
+                        if(error.code === 'auth/email-already-in-use') {
+                             if(!users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                                users.push({
+                                    id: 'usr_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                                    name: row["الاسم"],
+                                    email: email,
+                                    role: row["الدور (employee/manager/admin)"] || 'employee',
+                                    department: row["الادارة"] || 'أخرى',
+                                    managerId: mgrId,
+                                    baseSalary: parseFloat(row["الراتب الاساسي"]) || 4000,
+                                    variableSalary: parseFloat(row["الحافز المتغير"]) || 3000
+                                });
+                                successCount++;
+                             }
+                        }
+                    }
+                }
+
+                // تسجيل خروج التطبيق الثانوي لضمان النظافة
+                await signOut(secondaryAuth);
+                
+                DB.set('users', users);
+                renderDashboard();
+                setTimeout(() => {
+                    document.getElementById('upload-progress-container').style.display = 'none';
+                    showToast(`تم رفع وإنشاء ${successCount} مستخدم بنجاح!`, "✅");
+                }, 1500);
+            };
+            reader.readAsArrayBuffer(file);
+            // تفريغ المدخل ليسمح برفع نفس الملف ثانية إذا لزم الأمر
+            event.target.value = '';
+        };
+
+        // نوافذ الإنشاء والتعديل الفردية
         window.openCreateUserModal = () => {
             const mgrSelect = document.getElementById('new-user-manager'); mgrSelect.innerHTML = '<option value="">-- اختياري --</option>';
             users.filter(x => x.role === 'manager').forEach(m => mgrSelect.innerHTML += `<option value="${m.id}">${m.name} (${m.department})</option>`);
@@ -1196,27 +1296,26 @@
             if(users.some(u => u.email === email)) return showToast("البريد الإلكتروني موجود مسبقاً", "❌");
 
             const btn = document.getElementById('btn-submit-create-user');
-            btn.innerText = 'جاري الإنشاء في Firebase...'; btn.disabled = true;
+            btn.innerText = 'جاري الإنشاء...'; btn.disabled = true;
 
             try {
-                // إنشاء المستخدم في Firebase
-                await createUserWithEmailAndPassword(auth, email, password);
+                // نستخدم Secondary Auth هنا أيضاً لعدم طرد الأدمن
+                await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                await signOut(secondaryAuth);
                 
-                // حفظ البيانات في القاعدة المحلية
                 users.push({ id: 'usr_' + Date.now(), name, email, role, department: dept, phone: '', managerId: role === 'employee' ? managerId : null, baseSalary: baseSal, variableSalary: varSal });
                 DB.set('users', users);
                 
-                // تسجيل خروج الأدمن إجبارياً للعودة للشاشة الرئيسية
-                alert("تم إنشاء المستخدم في Firebase وحفظ صلاحياته.\nلدواعي الأمن (Firebase Auth)، تم تسجيل خروجك وعليك الدخول بحسابك (الأدمن) مرة أخرى.");
-                await signOut(auth);
-                window.location.reload();
-
+                document.getElementById('create-user-modal').classList.add('hidden');
+                renderDashboard();
+                showToast("تم إنشاء الحساب بنجاح في Firebase والمحلي", "✅");
             } catch (error) {
                 console.error(error);
                 if(error.code === 'auth/email-already-in-use') showToast("البريد مسجل مسبقاً في Firebase", "❌");
                 else if(error.code === 'auth/weak-password') showToast("كلمة المرور ضعيفة (6 أحرف على الأقل)", "❌");
                 else showToast("حدث خطأ في إنشاء الحساب", "❌");
-                btn.innerText = 'إنشاء الحساب'; btn.disabled = false;
+            } finally {
+                btn.innerText = 'إنشاء في Firebase'; btn.disabled = false;
             }
         });
 
