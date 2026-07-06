@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النظام المتكامل لإدارة التقييمات والأداء - مركز التدريب الإقليمي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبة التعامل مع ملفات Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
@@ -56,13 +55,11 @@
 </head>
 <body class="text-slate-800">
 
-    <!-- التنبيهات -->
     <div id="custom-toast" class="fixed bottom-5 left-5 z-50 bg-rctws-primary text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 max-w-md transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none border-r-4 border-rctws-accent">
         <span id="toast-icon" class="text-xl">💡</span>
         <p id="toast-message" class="text-sm font-bold leading-relaxed"></p>
     </div>
 
-    <!-- شريط التنقل العلوي -->
     <nav class="bg-rctws-primary text-white shadow-xl sticky top-0 z-40 border-b-4 border-rctws-accent">
         <div class="container mx-auto px-4 py-3 flex flex-col lg:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4">
@@ -74,6 +71,7 @@
             </div>
             
             <div id="user-tools-bar" class="hidden flex-wrap items-center justify-center gap-3">
+                
                 <div class="bg-rctws-secondary border border-white/20 p-2 rounded-xl flex items-center gap-2 text-xs shadow-inner">
                     <span class="font-bold text-white/80">تاريخ النظام:</span>
                     <input type="date" id="system-date" class="text-rctws-primary p-1.5 rounded-lg border-none font-bold text-xs bg-white shadow-sm cursor-pointer w-32">
@@ -84,7 +82,6 @@
                         <span id="logged-user-name" class="font-black block text-sm text-white"></span>
                         <span id="logged-user-role" class="text-[10px] bg-rctws-accent text-rctws-primary px-2 py-0.5 rounded font-black block w-fit mt-1 shadow-sm"></span>
                     </div>
-                    <!-- زر تغيير كلمة المرور الجديد للموظف -->
                     <button onclick="openChangePasswordModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold px-3 py-2 rounded-lg text-xs transition shadow-md border border-slate-600">تغيير كلمة المرور</button>
                     <button id="logout-btn" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-2 rounded-lg text-xs transition shadow-md border border-rose-800">تسجيل خروج</button>
                 </div>
@@ -94,8 +91,7 @@
 
     <div class="container mx-auto p-4 md:p-6 pb-20">
         
-        <!-- شاشة تسجيل الدخول -->
-        <div id="login-panel" class="max-w-md mx-auto mt-10 md:mt-16 fade-in">
+        <div id="login-panel" class="max-w-md mx-auto mt-10 md:mt-16 fade-in hidden">
             <div class="glass-card p-8 shadow-2xl">
                 <div class="text-center mb-8">
                     <div class="bg-rctws-primary w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-slate-200">
@@ -125,7 +121,6 @@
 
         <div id="main-workspace" class="hidden flex-col gap-8 fade-in mt-4">
             
-            <!-- ================= أولاً: لوحة الموظف ================= -->
             <div id="employee-dashboard" class="hidden flex-col gap-6 fade-in">
                 
                 <div class="glass-card p-6 border-t-4 border-t-rctws-secondary">
@@ -190,7 +185,6 @@
                 </div>
             </div>
 
-            <!-- نافذة إتمام المهمة والملاحظات -->
             <div id="task-completion-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm fade-in">
                 <div class="glass-card p-8 w-full max-w-md">
                     <h3 class="font-black text-rctws-primary text-lg mb-4">تقرير إنجاز المهمة</h3>
@@ -204,7 +198,6 @@
                 </div>
             </div>
 
-            <!-- ================= ثانياً: لوحة المدير المباشر ================= -->
             <div id="manager-dashboard" class="hidden flex-col gap-6 fade-in">
                 
                 <div class="glass-card overflow-hidden shadow-sm">
@@ -317,7 +310,6 @@
                 </div>
             </div>
 
-            <!-- ================= ثالثاً: لوحة رئيس المركز (Admin) ================= -->
             <div id="admin-dashboard" class="hidden flex-col gap-8 fade-in">
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -351,7 +343,6 @@
                     </div>
                 </div>
 
-                <!-- قسم التظلمات -->
                 <div class="glass-card border-rose-200 border-2 overflow-hidden shadow-lg" id="admin-complaints-area">
                     <div class="bg-rose-50 px-6 py-4 border-b border-rose-100 flex items-center gap-3">
                         <span class="text-2xl">⚖️</span>
@@ -450,26 +441,30 @@
         </div>
     </div>
 
-    <!-- نوافذ منبثقة (Modals) -->
-
-    <!-- نافذة تغيير كلمة المرور للمستخدم -->
     <div id="change-password-modal" class="hidden fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm">
         <div class="glass-card p-8 w-full max-w-md relative bg-white">
-            <h3 class="font-black text-rctws-primary text-xl mb-6 border-b border-slate-100 pb-3">تغيير كلمة المرور الخاصة بك</h3>
+            <h3 class="font-black text-rctws-primary text-xl mb-6 border-b border-slate-100 pb-3">تغيير كلمة المرور المتقدم</h3>
             <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-2">كلمة المرور الحالية</label>
+                    <input type="password" id="current-user-pass-input" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 border-slate-200">
+                </div>
                 <div>
                     <label class="block text-xs font-black text-slate-500 mb-2">كلمة المرور الجديدة (6 أحرف على الأقل)</label>
                     <input type="password" id="new-user-pass-input" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 border-slate-200">
                 </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-2">تأكيد كلمة المرور الجديدة</label>
+                    <input type="password" id="confirm-user-pass-input" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 border-slate-200">
+                </div>
             </div>
             <div class="mt-8 flex gap-3">
-                <button onclick="updateMyPassword()" class="flex-2 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 px-4 rounded-xl transition shadow text-sm w-full">حفظ وتحديث (Firebase)</button>
+                <button onclick="updateMyPassword()" class="flex-2 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 px-4 rounded-xl transition shadow text-sm w-full">تأكيد وتحديث</button>
                 <button onclick="document.getElementById('change-password-modal').classList.add('hidden')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black py-3 rounded-xl transition text-sm w-full">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة داشبورد المستخدم (KPIs) من منظور الأدمن -->
     <div id="user-kpi-modal" class="hidden fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm overflow-y-auto">
         <div class="glass-card p-6 w-full max-w-4xl relative bg-white my-auto">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
@@ -508,7 +503,6 @@
         </div>
     </div>
 
-    <!-- نافذة إضافة مستخدم جديد بـ Firebase -->
     <div id="create-user-modal" class="hidden fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm">
         <div class="glass-card p-8 w-full max-w-lg relative bg-white">
             <h3 class="font-black text-rctws-primary text-xl mb-6 flex items-center gap-2 border-b pb-3"><span>➕</span> إضافة مستخدم مفرد</h3>
@@ -557,7 +551,6 @@
         </div>
     </div>
 
-    <!-- تعديل / إيقاف المستخدم (للأدمن) و إدارة الأمان -->
     <div id="edit-user-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm">
         <div class="glass-card p-8 w-full max-w-md relative bg-white">
             <h3 class="font-black text-rctws-primary text-xl mb-6 border-b border-slate-100 pb-3">تعديل الرواتب والصلاحيات</h3>
@@ -593,12 +586,13 @@
                 </div>
             </div>
 
-            <!-- زر استعادة كلمة المرور للأدمن -->
-            <div class="mt-6 pt-4 border-t border-slate-100">
-                <label class="block text-xs font-black text-slate-500 mb-2">إدارة أمان الحساب</label>
-                <button onclick="adminResetPassword()" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-700 font-black py-2.5 rounded-xl text-xs transition shadow-sm border border-amber-200 flex items-center justify-center gap-2">
-                    <span>📧</span> إرسال رابط "إعادة تعيين كلمة المرور" للموظف
-                </button>
+            <div class="mt-6 pt-4 border-t border-slate-200">
+                <label class="block text-xs font-black text-slate-500 mb-2 text-rose-700">إدارة الأمان (تغيير كلمة المرور إجبارياً)</label>
+                <div class="flex gap-2">
+                    <input type="text" id="admin-force-pass-input" placeholder="كلمة المرور الجديدة..." class="w-full rounded-xl p-2.5 text-sm font-bold bg-rose-50 border-rose-200 text-rose-900">
+                    <button onclick="adminForceResetPassword()" class="bg-rose-600 hover:bg-rose-700 text-white font-black px-4 py-2.5 rounded-xl text-xs transition shadow-md whitespace-nowrap">فرض التغيير</button>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1 font-bold">بدون حذف الحساب، سيتم تغييرها فوراً.</p>
             </div>
 
             <div class="mt-6 flex gap-3">
@@ -608,13 +602,12 @@
         </div>
     </div>
 
-    <!-- السكربت -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        // تم إضافة دوال تغيير الباسورد واستعادة الباسورد
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, updatePassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        // إضافة مكتبات Firestore
+        import { getFirestore, collection, doc, setDoc, getDocs, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // دعم بيئة Canvas بالإضافة للبيئة الخاصة بك
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyCyTasPs776gFXXIxIVs4UPn19gYq4BGZ0",
             authDomain: "rctws-6cf4a.firebaseapp.com",
@@ -626,57 +619,15 @@
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Secondary App for Bulk Upload (Prevents logging out the Admin)
+        // Secondary App for Admin overrides and Bulk Upload
         const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
         const secondaryAuth = getAuth(secondaryApp);
 
-        // تم تحويل قاعدة البيانات لتكون مبنية على الذاكرة في المتصفح بناءً على تعليمات الأمان (In-Memory Database)
-        const memoryDB = {};
-        const DB = {
-            get: (key) => memoryDB[key] ? JSON.parse(memoryDB[key]) : null,
-            set: (key, val) => { memoryDB[key] = JSON.stringify(val); },
-            seed: () => {
-                const defaultUsers = [
-                    { id: 'admin_master', email: 'admin@rctws.com', name: 'رئيس المركز (إدارة عليا)', role: 'admin', department: 'الإدارة العليا', baseSalary: 20000, variableSalary: 15000 }
-                ];
-                const defaultTemplates = [
-                    { id: 'tpl_1', title: 'دراسة ومراجعة العقود وإبداء الرأي' },
-                    { id: 'tpl_2', title: 'حضور لجان الفتح الفني والمالي والاستفسارات' },
-                    { id: 'tpl_3', title: 'التحقيق في المذكرات الواردة والرد على الدعاوى' },
-                    { id: 'tpl_4', title: 'استلام البوسطة الواردة وتصويرها وتوزيعها' },
-                    { id: 'tpl_5', title: 'أرشفة المستندات وعمل مسح ضوئي' },
-                    { id: 'tpl_6', title: 'تنظيم المعمل وتحضير الأجهزة للتجارب' },
-                    { id: 'tpl_7', title: 'الصيانة الدورية والوقائية للأجهزة' },
-                    { id: 'tpl_8', title: 'تنظيم دخول وخروج السيارات وتفتيشها' },
-                    { id: 'tpl_9', title: 'تسجيل حضور وانصراف موظفين المركز' },
-                    { id: 'tpl_10', title: 'المرور الدائم لتأمين المركز وطفايات الحريق' },
-                    { id: 'tpl_11', title: 'إعداد تقارير الإنجاز الشهرية والربع سنوية' },
-                    { id: 'tpl_12', title: 'تصميم كتيب خطة البرامج ودليل البرامج' },
-                    { id: 'tpl_13', title: 'تنفيذ أعمال قياس أثر التدريب للبرامج' },
-                    { id: 'tpl_14', title: 'الإعداد الشامل لملف الأيزو ونظام الجودة' },
-                    { id: 'tpl_15', title: 'مراجعة مستندات الصرف لجميع الأبواب الموازنية' },
-                    { id: 'tpl_16', title: 'إعداد الخطة الشهرية للتدفقات النقدية' },
-                    { id: 'tpl_17', title: 'إنشاء أوامر الدفع الإلكترونية (GFMIS)' },
-                    { id: 'tpl_18', title: 'مراجعة المرتبات والمكافآت (Payroll)' },
-                    { id: 'tpl_19', title: 'متابعة البصمة وتحويلها لساعات وتأخيرات' },
-                    { id: 'tpl_20', title: 'تحرير المذكرات والأوامر الإدارية والقرارات' },
-                    { id: 'tpl_21', title: 'متابعة صيانة وتشغيل التكييف المركزي والمولدات' },
-                    { id: 'tpl_22', title: 'الإشراف على الأعمال المدنية ورفع كفاءة الفنادق' },
-                    { id: 'tpl_23', title: 'تقديم الدعم الفني لأجهزة الكمبيوتر والشبكة' },
-                    { id: 'tpl_24', title: 'متابعة تراخيص سيارات المركز وأوامر التشغيل' },
-                    { id: 'tpl_25', title: 'تنسيق المراسم واستخراج التصاريح وحجز الفنادق' },
-                    { id: 'tpl_26', title: 'تجهيز القاعات وإعداد جداول التشغيل للبرامج' },
-                    { id: 'tpl_27', title: 'إدارة الروابط وتوثيق الحضور لدورات التحول الرقمي' },
-                    { id: 'tpl_28', title: 'صيانة وتنسيق الأشجار والمسطحات الخضراء' }
-                ];
-                DB.set('users', defaultUsers); DB.set('templates', defaultTemplates); DB.set('tasks', []); 
-                const d = new Date(); if(d.getDay() === 5) d.setDate(d.getDate() + 2); if(d.getDay() === 6) d.setDate(d.getDate() + 1);
-                DB.set('simDate', d.toISOString().split('T')[0]); DB.set('attendance', []);
-            }
-        };
-
-        let currentUser = null, users = [], tasks = [], templates = [], systemDate = '', attendanceLogs = [];
+        let currentUser = null, users = [], tasks = [], templates = [], attendanceLogs = [];
+        // الاحتفاظ بتاريخ النظام في التخزين المحلي للمتصفح
+        let systemDate = localStorage.getItem('rctws_simDate') || new Date().toISOString().split('T')[0];
 
         window.showToast = (msg, icon = "💡") => {
             const toast = document.getElementById('custom-toast');
@@ -685,10 +636,33 @@
             setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'), 4000);
         }
 
-        function loadLocalData() {
-            users = DB.get('users'); tasks = DB.get('tasks'); templates = DB.get('templates'); systemDate = DB.get('simDate'); attendanceLogs = DB.get('attendance') || [];
-            if (!users || !templates) { DB.seed(); users = DB.get('users'); tasks = DB.get('tasks'); templates = DB.get('templates'); systemDate = DB.get('simDate'); attendanceLogs = []; }
-            document.getElementById('system-date').value = systemDate;
+        // ================= Migration to Firestore =================
+        async function fetchFirestoreData() {
+            try {
+                // جلب المستخدمين
+                const usersSnap = await getDocs(collection(db, "users"));
+                users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                // جلب المهام
+                const tasksSnap = await getDocs(collection(db, "tasks"));
+                tasks = tasksSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                // جلب سجل الحضور
+                const attSnap = await getDocs(collection(db, "attendance"));
+                attendanceLogs = attSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                // مهام افتراضية للـ Templates
+                templates = [
+                    { id: 'tpl_1', title: 'دراسة ومراجعة العقود وإبداء الرأي' },
+                    { id: 'tpl_11', title: 'إعداد تقارير الإنجاز الشهرية والربع سنوية' },
+                    { id: 'tpl_18', title: 'مراجعة المرتبات والمكافآت (Payroll)' }
+                ];
+                
+                document.getElementById('system-date').value = systemDate;
+            } catch (error) {
+                console.error("Error loading Firestore data:", error);
+                showToast("خطأ في الاتصال بقاعدة البيانات", "❌");
+            }
         }
 
         // ================= الدخول وإدارة الجلسات =================
@@ -704,15 +678,24 @@
 
             try {
                 await signInWithEmailAndPassword(auth, emailIn, passwordIn);
-                loadLocalData(); 
-                const matchedUser = users.find(u => u.email.toLowerCase() === emailIn.toLowerCase());
+                await fetchFirestoreData(); 
+                const matchedUser = users.find(u => u.id === auth.currentUser.uid);
 
                 if (matchedUser) {
                     currentUser = matchedUser;
                     initWorkspace();
                 } else {
-                    showToast("حسابك صحيح في Firebase لكن غير مسجل في الهيكل الإداري للـ ERP أو تم إيقافه.", "⚠️");
-                    await signOut(auth);
+                    // إذا كان الحساب الأدمن الرئيسي غير موجود بعد في Firestore، نقوم بإنشائه كأول مرة
+                    if (emailIn.includes('admin')) {
+                        const newAdmin = { id: auth.currentUser.uid, email: emailIn, name: 'رئيس المركز (إدارة عليا)', role: 'admin', department: 'الإدارة العليا', baseSalary: 20000, variableSalary: 15000, authPass: passwordIn };
+                        await setDoc(doc(db, "users", auth.currentUser.uid), newAdmin);
+                        users.push(newAdmin);
+                        currentUser = newAdmin;
+                        initWorkspace();
+                    } else {
+                        showToast("حسابك غير مسجل في الهيكل الإداري للـ ERP.", "⚠️");
+                        await signOut(auth);
+                    }
                 }
             } catch (error) {
                 showToast("البريد الإلكتروني أو كلمة المرور غير صحيحة.", "❌");
@@ -729,10 +712,10 @@
             document.getElementById('login-panel').classList.remove('hidden');
         });
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user && !currentUser) {
-                loadLocalData();
-                const matchedUser = users.find(u => u.email.toLowerCase() === user.email.toLowerCase());
+                await fetchFirestoreData();
+                const matchedUser = users.find(u => u.id === user.uid);
                 if (matchedUser) { currentUser = matchedUser; initWorkspace(); }
             }
         });
@@ -750,13 +733,13 @@
         }
 
         document.getElementById('system-date').addEventListener('change', (e) => {
-            systemDate = e.target.value; DB.set('simDate', systemDate);
+            systemDate = e.target.value; 
+            localStorage.setItem('rctws_simDate', systemDate);
             showToast(`تاريخ العمل الآن: ${systemDate}`, "⏰");
             renderDashboard();
         });
 
-        window.renderDashboard = () => {
-            loadLocalData();
+        window.renderDashboard = async () => {
             ['employee-dashboard', 'manager-dashboard', 'admin-dashboard'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) { el.classList.add('hidden'); el.classList.remove('flex'); }
@@ -768,28 +751,33 @@
         }
 
         // ================= الموظف (التنفيذ، الحضور، الرواتب) =================
-        window.registerAttendance = (type) => {
+        window.registerAttendance = async (type) => {
             const today = systemDate;
             const nowTime = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-            let todayLog = attendanceLogs.find(a => a.userId === currentUser.id && a.date === today);
+            const logId = currentUser.id + "_" + today;
+            let todayLog = attendanceLogs.find(a => a.id === logId);
             
             if (type === 'leave') {
                 const lType = document.getElementById('leave-type-select').value;
                 if(todayLog && todayLog.checkIn) return showToast("لا يمكن تسجيل إجازة بعد إثبات الحضور.", "❌");
-                if(!todayLog) attendanceLogs.push({ userId: currentUser.id, managerId: currentUser.managerId, date: today, checkIn: null, checkOut: null, status: lType, managerEval: null });
-                else todayLog.status = lType;
-                showToast(`تم تسجيل (${lType}) بنجاح، بانتظار اعتماد المدير.`, "🌴");
+                
+                const data = { userId: currentUser.id, managerId: currentUser.managerId, date: today, checkIn: null, checkOut: null, status: lType, managerEval: null };
+                if(!todayLog) { attendanceLogs.push({id: logId, ...data}); await setDoc(doc(db, "attendance", logId), data); }
+                else { todayLog.status = lType; await updateDoc(doc(db, "attendance", logId), { status: lType }); }
+                showToast(`تم تسجيل (${lType}) بنجاح.`, "🌴");
             } 
             else if (type === 'in' && (!todayLog || todayLog.status !== 'حضور')) {
-                if(!todayLog) attendanceLogs.push({ userId: currentUser.id, managerId: currentUser.managerId, date: today, checkIn: nowTime, checkOut: null, status: 'حضور', managerEval: null });
-                else { todayLog.checkIn = nowTime; todayLog.status = 'حضور'; }
+                const data = { userId: currentUser.id, managerId: currentUser.managerId, date: today, checkIn: nowTime, checkOut: null, status: 'حضور', managerEval: null };
+                if(!todayLog) { attendanceLogs.push({id: logId, ...data}); await setDoc(doc(db, "attendance", logId), data); }
+                else { todayLog.checkIn = nowTime; todayLog.status = 'حضور'; await updateDoc(doc(db, "attendance", logId), { checkIn: nowTime, status: 'حضور' }); }
                 showToast(`تم إثبات الحضور الساعة ${nowTime}`, "✅");
             } 
             else if (type === 'out' && todayLog && !todayLog.checkOut && todayLog.status === 'حضور') {
                 todayLog.checkOut = nowTime;
+                await updateDoc(doc(db, "attendance", logId), { checkOut: nowTime });
                 showToast(`تم إثبات الانصراف الساعة ${nowTime}`, "👋");
             }
-            DB.set('attendance', attendanceLogs); renderDashboard();
+            renderDashboard();
         };
 
         function renderEmployeeDashboard() {
@@ -809,7 +797,8 @@
                 document.getElementById('weekend-alert').classList.add('hidden');
                 document.getElementById('attendance-controls').classList.remove('hidden');
                 
-                const todayLog = attendanceLogs.find(a => a.userId === currentUser.id && a.date === systemDate);
+                const logId = currentUser.id + "_" + systemDate;
+                const todayLog = attendanceLogs.find(a => a.id === logId);
                 
                 if (!todayLog) { 
                     btnIn.disabled = false; btnOut.disabled = true; btnLeave.disabled = false;
@@ -833,12 +822,10 @@
             const listHolder = document.getElementById('employee-tasks-holder'); listHolder.innerHTML = '';
             
             let tasksScorePercent = 0; 
-            
             if (myTasks.length === 0) listHolder.innerHTML = `<p class="text-center text-slate-400 text-sm font-bold p-4">لا يوجد مهام مسندة إليك حالياً.</p>`;
 
             myTasks.forEach(task => {
                 let cardAction = '', statusHtml = '';
-                
                 if (task.status === 'evaluated') {
                     tasksScorePercent += (task.evaluation / 100) * task.weight;
                     statusHtml = `<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-1 rounded">معتمدة: ${task.evaluation}%</span>`;
@@ -905,7 +892,7 @@
         };
         window.closeCompletionModal = () => document.getElementById('task-completion-modal').classList.add('hidden');
         
-        window.confirmTaskCompletion = () => {
+        window.confirmTaskCompletion = async () => {
             const taskId = document.getElementById('complete-task-id').value;
             const note = document.getElementById('task-completion-note').value.trim();
             const task = tasks.find(t => t.id === taskId);
@@ -918,14 +905,20 @@
                 task.status = 'completed'; task.empNote = note;
                 showToast("تم إرسال التقرير للمدير بنجاح", "✅");
             }
-            DB.set('tasks', tasks); closeCompletionModal(); renderDashboard();
+            
+            await updateDoc(doc(db, "tasks", taskId), { status: task.status, evaluation: task.evaluation || 0, locked: task.locked || false, empNote: task.empNote });
+            closeCompletionModal(); renderDashboard();
         };
 
-        window.submitComplaint = (taskId) => {
+        window.submitComplaint = async (taskId) => {
             const reason = prompt("اكتب نص التظلم لرفعه لمعالي رئيس المركز:");
             if(reason) {
                 const t = tasks.find(x => x.id === taskId);
-                if(t) { t.complaint = reason; DB.set('tasks', tasks); renderDashboard(); showToast("تم رفع التظلم", "⚖️"); }
+                if(t) { 
+                    t.complaint = reason; 
+                    await updateDoc(doc(db, "tasks", taskId), { complaint: reason });
+                    renderDashboard(); showToast("تم رفع التظلم", "⚖️"); 
+                }
             }
         };
 
@@ -998,14 +991,22 @@
             });
         }
 
-        window.evaluateAttendance = (empId, forcedEval = null) => {
+        window.evaluateAttendance = async (empId, forcedEval = null) => {
             let val = forcedEval !== null ? forcedEval : parseInt(document.getElementById(`eval-att-${empId}`).value);
             if(isNaN(val) || val < 0 || val > 100) return;
             
-            let log = attendanceLogs.find(a => a.userId === empId && a.date === systemDate);
-            if(!log) attendanceLogs.push({ userId: empId, managerId: currentUser.id, date: systemDate, checkIn: null, checkOut: null, managerEval: val });
-            else log.managerEval = val;
-            DB.set('attendance', attendanceLogs); renderDashboard();
+            const logId = empId + "_" + systemDate;
+            let log = attendanceLogs.find(a => a.id === logId);
+            
+            if(!log) {
+                const data = { userId: empId, managerId: currentUser.id, date: systemDate, checkIn: null, checkOut: null, managerEval: val };
+                attendanceLogs.push({id: logId, ...data});
+                await setDoc(doc(db, "attendance", logId), data);
+            } else {
+                log.managerEval = val;
+                await updateDoc(doc(db, "attendance", logId), { managerEval: val });
+            }
+            renderDashboard();
         }
 
         window.checkManagerWeights = () => {
@@ -1032,7 +1033,7 @@
             }
         };
 
-        document.getElementById('assign-submit-btn').addEventListener('click', () => {
+        document.getElementById('assign-submit-btn').addEventListener('click', async () => {
             const empId = document.getElementById('assign-employee-select').value;
             const title = document.getElementById('assign-template-select').value;
             const freq = document.getElementById('assign-frequency').value;
@@ -1044,12 +1045,17 @@
             const currentTotal = tasks.filter(t => t.employeeId === empId && t.status !== 'evaluated').reduce((s, t) => s + t.weight, 0);
             if(currentTotal + weight > 100) return showToast("يجب عمل توزيع برمجى للخصم لتجاوز 100%", "🛑");
             
-            tasks.push({ id: 'task_' + Date.now(), employeeId: empId, managerId: currentUser.id, title: title, frequency: freq, deadline: deadline, weight: weight, status: 'pending', evaluation: 0, locked: false, complaint: null, empNote: null });
-            DB.set('tasks', tasks); renderDashboard();
+            const newTaskId = 'task_' + Date.now();
+            const taskData = { employeeId: empId, managerId: currentUser.id, title: title, frequency: freq, deadline: deadline, weight: weight, status: 'pending', evaluation: 0, locked: false, complaint: null, empNote: null };
+            
+            tasks.push({ id: newTaskId, ...taskData });
+            await setDoc(doc(db, "tasks", newTaskId), taskData);
+            
+            renderDashboard();
             ['assign-employee-select', 'assign-template-select', 'assign-deadline', 'assign-weight-input'].forEach(i => document.getElementById(i).value = '');
         });
 
-        window.autoRebalanceWeights = () => {
+        window.autoRebalanceWeights = async () => {
             const empId = document.getElementById('assign-employee-select').value;
             const newWeight = parseInt(document.getElementById('assign-weight-input').value) || 0;
             if(!empId || newWeight <= 0) return;
@@ -1061,18 +1067,27 @@
             if(excess <= 0) return;
 
             const deductionPerTask = excess / openTasks.length;
-            openTasks.forEach(t => { t.weight = Math.max(1, t.weight - deductionPerTask); });
+            const batch = writeBatch(db);
             
-            DB.set('tasks', tasks);
+            openTasks.forEach(t => { 
+                t.weight = Math.max(1, t.weight - deductionPerTask); 
+                batch.update(doc(db, "tasks", t.id), { weight: t.weight });
+            });
+            
+            await batch.commit();
             showToast("تم إعادة توازن الأوزان المفتوحة لتقبل المهمة الجديدة.", "⚖️");
             checkManagerWeights(); 
         };
 
-        window.submitTaskEvaluation = (taskId) => {
+        window.submitTaskEvaluation = async (taskId) => {
             const val = parseInt(document.getElementById(`eval-val-${taskId}`).value);
             if(isNaN(val) || val < 0 || val > 100) return;
             const t = tasks.find(x => x.id === taskId);
-            if(t) { t.status = 'evaluated'; t.evaluation = val; DB.set('tasks', tasks); renderDashboard(); }
+            if(t) { 
+                t.status = 'evaluated'; t.evaluation = val; 
+                await updateDoc(doc(db, "tasks", taskId), { status: 'evaluated', evaluation: val });
+                renderDashboard(); 
+            }
         };
 
         // ================= الإدارة العليا (Admin) =================
@@ -1141,71 +1156,110 @@
             });
         };
 
-        window.adminResolveComplaint = (taskId, reject) => {
+        window.adminResolveComplaint = async (taskId, reject) => {
             const t = tasks.find(x => x.id === taskId);
             if(t) {
-                if(reject) { t.complaint = null; showToast("تم تأييد قرار المدير ورفض التظلم.", "⚖️"); }
-                else { t.complaint = null; t.status = 'completed'; showToast("تم فتح المهمة ليعيد المدير تقييمها.", "🔄"); }
-                DB.set('tasks', tasks); renderDashboard();
+                if(reject) { 
+                    t.complaint = null; 
+                    await updateDoc(doc(db, "tasks", taskId), { complaint: null });
+                    showToast("تم تأييد قرار المدير ورفض التظلم.", "⚖️"); 
+                }
+                else { 
+                    t.complaint = null; t.status = 'completed'; 
+                    await updateDoc(doc(db, "tasks", taskId), { complaint: null, status: 'completed' });
+                    showToast("تم فتح المهمة ليعيد المدير تقييمها.", "🔄"); 
+                }
+                renderDashboard();
             }
         };
 
-        window.deleteUser = (userId) => {
+        window.deleteUser = async (userId) => {
             if(confirm("هل أنت متأكد من إيقاف وحذف هذا المستخدم من سجلات النظام؟")) {
                 users = users.filter(u => u.id !== userId);
-                DB.set('users', users);
+                await deleteDoc(doc(db, "users", userId));
                 showToast("تم حذف المستخدم من قاعدة بيانات المنظومة.", "🗑️");
                 renderDashboard();
             }
         };
 
-        // ================= الأمان وتغيير الباسورد =================
+        // ================= الأمان وتغيير الباسورد (إصدار متقدم) =================
         
-        // فتح نافذة تغيير الباسورد للمستخدم نفسه
         window.openChangePasswordModal = () => {
+            document.getElementById('current-user-pass-input').value = '';
             document.getElementById('new-user-pass-input').value = '';
+            document.getElementById('confirm-user-pass-input').value = '';
             document.getElementById('change-password-modal').classList.remove('hidden');
         };
 
-        // تنفيذ عملية التغيير في Firebase
         window.updateMyPassword = async () => {
+            const currentPass = document.getElementById('current-user-pass-input').value;
             const newPass = document.getElementById('new-user-pass-input').value;
+            const confirmPass = document.getElementById('confirm-user-pass-input').value;
+            
+            if(!currentPass || !newPass || !confirmPass) return showToast("يرجى إكمال الحقول.", "⚠️");
             if(newPass.length < 6) return showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", "⚠️");
+            if(newPass !== confirmPass) return showToast("كلمة المرور الجديدة غير متطابقة.", "❌");
             
             const user = auth.currentUser;
             if(user) {
                 try {
+                    // Re-authenticate first
+                    const credential = EmailAuthProvider.credential(user.email, currentPass);
+                    await reauthenticateWithCredential(user, credential);
+                    
+                    // Update password
                     await updatePassword(user, newPass);
-                    showToast("تم تحديث كلمة المرور بنجاح في سيرفرات Firebase!", "✅");
+                    
+                    // Update fallback authPass in Firestore for Admin override
+                    await updateDoc(doc(db, "users", user.uid), { authPass: newPass });
+
+                    showToast("تم تغيير كلمة المرور بنجاح! يرجى الدخول مجدداً.", "✅");
                     document.getElementById('change-password-modal').classList.add('hidden');
+                    
+                    setTimeout(async () => {
+                        await signOut(auth);
+                        window.location.reload();
+                    }, 2000);
+
                 } catch (error) {
-                    if (error.code === 'auth/requires-recent-login') {
-                        showToast("لأسباب أمنية، يرجى تسجيل الخروج والدخول مجدداً لتغيير كلمة المرور.", "🔐");
-                    } else {
-                        showToast("حدث خطأ أثناء التحديث: " + error.message, "❌");
-                    }
+                    if (error.code === 'auth/invalid-credential') showToast("كلمة المرور الحالية غير صحيحة.", "❌");
+                    else showToast("حدث خطأ أثناء التحديث: " + error.message, "❌");
                 }
             }
         };
 
-        // قيام الأدمن بإرسال رابط تعيين كلمة مرور للموظف
-        window.adminResetPassword = async () => {
+        // الحل البرمجي لتعيين كلمة مرور للمستخدم من قبل الأدمن دون حذف الحساب
+        window.adminForceResetPassword = async () => {
             const userId = document.getElementById('edit-user-id').value;
+            const newPass = document.getElementById('admin-force-pass-input').value;
             const u = users.find(x => x.id === userId);
             
-            if(!u) return;
+            if(!u || !newPass || newPass.length < 6) return showToast("أدخل كلمة مرور لا تقل عن 6 أحرف.", "⚠️");
 
-            if(confirm(`هل تريد إرسال رابط تعيين كلمة مرور جديدة لبريد الموظف: ${u.email} ؟`)) {
+            if(confirm(`هل أنت متأكد من فرض تغيير كلمة المرور للموظف: ${u.email} ؟`)) {
                 try {
-                    await sendPasswordResetEmail(auth, u.email);
-                    showToast("تم إرسال رابط التعيين بنجاح لبريد المستخدم!", "📧");
+                    // استخدام التطبيق الثانوي لتسجيل الدخول كالموظف باستخدام كلمة مروره المحفوظة مؤقتاً في Firestore
+                    const currentPassFallback = u.authPass || "123456"; // Fallback للمستخدمين القدامى
+                    const userCred = await signInWithEmailAndPassword(secondaryAuth, u.email, currentPassFallback);
+                    
+                    // تغيير كلمة المرور
+                    await updatePassword(userCred.user, newPass);
+                    await signOut(secondaryAuth);
+                    
+                    // تحديث الرمز في Firestore للمرة القادمة
+                    u.authPass = newPass;
+                    await updateDoc(doc(db, "users", userId), { authPass: newPass });
+
+                    document.getElementById('admin-force-pass-input').value = '';
+                    showToast("تم تغيير كلمة مرور الموظف بنجاح (Client-Side Workaround)!", "✅");
                 } catch(error) {
-                    showToast("حدث خطأ في الإرسال: " + error.message, "❌");
+                    showToast("خطأ: لم نتمكن من الوصول للحساب لتعديله عبر التطبيق الثانوي.", "❌");
+                    console.error(error);
                 }
             }
         };
 
-        // ================= الإكسيل ومؤشرات الأداء =================
+        // ================= الإكسيل ومؤشرات الأداء المجمعة =================
         
         window.openUserDashboard = (userId) => {
             const u = users.find(x => x.id === userId); if(!u) return;
@@ -1243,31 +1297,29 @@
             openEditUserModal(userId);
         };
 
-        // قالب الإكسيل المحدث ليتضمن كافة البيانات الإدارية بدقة
         window.downloadExcelTemplate = () => {
             const data = [
                 { 
-                    "الاسم": "أحمد محمد (مثال)", 
-                    "البريد الالكتروني": "ahmed@rctws.com", 
+                    "الإدارة": "تقنية المعلومات",
+                    "الشخص المسئول": "أحمد محمد (مثال)", 
+                    "المسمى الوظيفي": "مهندس شبكات",
+                    "المهام / المسئوليات": "1- صيانة السيرفرات\n2- تحديث أجهزة الكمبيوتر\n3- الدعم الفني اليومي",
+                    "دورية التنفيذ": "شهرية",
+                    "الإيميل": "ahmed@rctws.com", 
                     "كلمة المرور": "123456", 
-                    "الادارة": "تقنية المعلومات", 
-                    "الدور (employee/manager/admin)": "employee", 
-                    "ايميل المدير (اختياري)": "manager_it@rctws.com", 
-                    "الراتب الاساسي": 5000, 
-                    "الحافز المتغير": 2500 
+                    "إيميل المدير المباشر": "manager_it@rctws.com", 
+                    "الراتب الأساسي": 5000, 
+                    "الحافز المتغير": 2500,
+                    "الدور الوظيفي": "employee"
                 }
             ];
             const worksheet = XLSX.utils.json_to_sheet(data);
-            
-            // ضبط حجم الأعمدة
-            const wscols = [
-                {wch: 25}, {wch: 30}, {wch: 15}, {wch: 20}, {wch: 25}, {wch: 30}, {wch: 15}, {wch: 15}
-            ];
+            const wscols = [{wch: 20}, {wch: 25}, {wch: 20}, {wch: 40}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}];
             worksheet['!cols'] = wscols;
 
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Users Template");
-            XLSX.writeFile(workbook, "RCTWS_ERP_Users_Template.xlsx");
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Employees & Tasks");
+            XLSX.writeFile(workbook, "RCTWS_ERP_Complete_Template.xlsx");
         };
 
         window.handleExcelUpload = (event) => {
@@ -1288,68 +1340,89 @@
                 const progressText = document.getElementById('upload-progress-text');
                 const progressBar = document.getElementById('upload-progress-bar');
                 
-                let successCount = 0;
+                let successUsers = 0;
+                let successTasks = 0;
 
                 for (let i = 0; i < json.length; i++) {
                     const row = json[i];
                     progressText.innerText = `${i + 1} / ${json.length}`;
                     progressBar.style.width = `${((i + 1) / json.length) * 100}%`;
 
-                    const email = row["البريد الالكتروني"];
+                    const email = row["الإيميل"];
+                    const name = row["الشخص المسئول"];
                     const password = row["كلمة المرور"] ? String(row["كلمة المرور"]) : "123456";
+                    const role = row["الدور الوظيفي"] || "employee";
+                    const dept = row["الإدارة"] || "أخرى";
+                    const freq = row["دورية التنفيذ"] || "شهرية";
                     
-                    if(!email || !row["الاسم"]) continue;
+                    if(!email || !name) continue;
                     
                     let mgrId = null;
-                    if(row["ايميل المدير (اختياري)"]) {
-                        const mgr = users.find(u => u.email.toLowerCase() === row["ايميل المدير (اختياري)"].toLowerCase());
+                    if(row["إيميل المدير المباشر"]) {
+                        const mgr = users.find(u => u.email.toLowerCase() === row["إيميل المدير المباشر"].toLowerCase());
                         if(mgr) mgrId = mgr.id;
                     }
 
+                    let newUserId = null;
+
                     try {
-                        await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                        // إنشاء المستخدم في الـ Auth
+                        const userCred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                        newUserId = userCred.user.uid;
                         
-                        if(!users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-                            users.push({
-                                id: 'usr_' + Date.now() + Math.random().toString(36).substr(2, 5),
-                                name: row["الاسم"],
-                                email: email,
-                                role: row["الدور (employee/manager/admin)"] || 'employee',
-                                department: row["الادارة"] || 'أخرى',
-                                managerId: mgrId,
-                                baseSalary: parseFloat(row["الراتب الاساسي"]) || 4000,
-                                variableSalary: parseFloat(row["الحافز المتغير"]) || 3000
-                            });
-                        }
-                        successCount++;
+                        const userData = {
+                            id: newUserId, name: name, email: email, role: role, department: dept,
+                            managerId: mgrId, baseSalary: parseFloat(row["الراتب الأساسي"]) || 4000,
+                            variableSalary: parseFloat(row["الحافز المتغير"]) || 3000, authPass: password
+                        };
+                        
+                        await setDoc(doc(db, "users", newUserId), userData);
+                        users.push(userData);
+                        successUsers++;
+
                     } catch (error) {
-                        console.error(`خطأ في الإيميل ${email}:`, error);
                         if(error.code === 'auth/email-already-in-use') {
-                             if(!users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-                                users.push({
-                                    id: 'usr_' + Date.now() + Math.random().toString(36).substr(2, 5),
-                                    name: row["الاسم"],
-                                    email: email,
-                                    role: row["الدور (employee/manager/admin)"] || 'employee',
-                                    department: row["الادارة"] || 'أخرى',
-                                    managerId: mgrId,
-                                    baseSalary: parseFloat(row["الراتب الاساسي"]) || 4000,
-                                    variableSalary: parseFloat(row["الحافز المتغير"]) || 3000
-                                });
-                                successCount++;
-                             }
+                            // إذا كان موجوداً، نجلب الـ ID الخاص به لربط المهام
+                            const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+                            if(existingUser) newUserId = existingUser.id;
+                        }
+                    }
+
+                    // Smart Task Parsing (استخراج المهام المجمعة)
+                    if(newUserId && row["المهام / المسئوليات"]) {
+                        const tasksString = String(row["المهام / المسئوليات"]);
+                        const taskLines = tasksString.split(/\n/).filter(t => t.trim().length > 0);
+                        
+                        // تقسيم الوزن المالي برمجياً على المهام
+                        const weightPerTask = Math.floor(100 / taskLines.length) || 100;
+                        const deadlineDate = new Date(); deadlineDate.setDate(deadlineDate.getDate() + 30); // المهام تُسلم بعد 30 يوم كمثال
+                        const deadlineStr = deadlineDate.toISOString().split('T')[0];
+                        
+                        for (let line of taskLines) {
+                            // إزالة الأرقام والشرطات الترقيمية (مثل 1- أو - )
+                            let cleanTitle = line.replace(/^\d+[\-\.\)]\s*/, '').replace(/^[\-\*]\s*/, '').trim();
+                            if(cleanTitle) {
+                                const newTaskId = 'task_' + Date.now() + Math.random().toString(36).substr(2, 5);
+                                const taskData = {
+                                    employeeId: newUserId, managerId: mgrId, title: cleanTitle, frequency: freq, 
+                                    deadline: deadlineStr, weight: weightPerTask, status: 'pending', evaluation: 0, 
+                                    locked: false, complaint: null, empNote: null
+                                };
+                                await setDoc(doc(db, "tasks", newTaskId), taskData);
+                                tasks.push({id: newTaskId, ...taskData});
+                                successTasks++;
+                            }
                         }
                     }
                 }
 
                 await signOut(secondaryAuth);
-                DB.set('users', users);
                 renderDashboard();
                 
                 setTimeout(() => {
                     document.getElementById('upload-progress-container').style.display = 'none';
-                    showToast(`تم رفع وإنشاء ${successCount} مستخدم بنجاح!`, "✅");
-                }, 1500);
+                    showToast(`تم استيراد ${successUsers} موظف و ${successTasks} مهمة مجزأة بنجاح!`, "✅");
+                }, 2000);
             };
             reader.readAsArrayBuffer(file);
             event.target.value = '';
@@ -1378,18 +1451,21 @@
             btn.innerText = 'جاري الإنشاء...'; btn.disabled = true;
 
             try {
-                await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                const userCred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
                 await signOut(secondaryAuth);
                 
-                users.push({ id: 'usr_' + Date.now(), name, email, role, department: dept, phone: '', managerId: role === 'employee' ? managerId : null, baseSalary: baseSal, variableSalary: varSal });
-                DB.set('users', users);
+                const newUserId = userCred.user.uid;
+                const userData = { name, email, role, department: dept, managerId: role === 'employee' ? managerId : null, baseSalary: baseSal, variableSalary: varSal, authPass: password };
+                
+                await setDoc(doc(db, "users", newUserId), userData);
+                users.push({ id: newUserId, ...userData });
                 
                 document.getElementById('create-user-modal').classList.add('hidden');
                 renderDashboard();
-                showToast("تم إنشاء الحساب بنجاح في Firebase والمحلي", "✅");
+                showToast("تم إنشاء الحساب وحفظه في Firestore بنجاح", "✅");
             } catch (error) {
                 console.error(error);
-                if(error.code === 'auth/email-already-in-use') showToast("البريد مسجل مسبقاً في Firebase", "❌");
+                if(error.code === 'auth/email-already-in-use') showToast("البريد مسجل مسبقاً", "❌");
                 else if(error.code === 'auth/weak-password') showToast("كلمة المرور ضعيفة (6 أحرف على الأقل)", "❌");
                 else showToast("حدث خطأ في إنشاء الحساب", "❌");
             } finally {
@@ -1404,6 +1480,7 @@
             document.getElementById('edit-user-role').value = u.role; 
             document.getElementById('edit-user-base-salary').value = u.baseSalary || 0;
             document.getElementById('edit-user-var-salary').value = u.variableSalary || 0;
+            document.getElementById('admin-force-pass-input').value = '';
             
             const mgrSelect = document.getElementById('edit-user-manager'); mgrSelect.innerHTML = '<option value="">-- بدون مدير --</option>';
             users.filter(x => x.role === 'manager').forEach(m => mgrSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`);
@@ -1414,7 +1491,7 @@
 
         window.toggleEditManagerSelect = () => { document.getElementById('edit-user-manager-container').style.display = document.getElementById('edit-user-role').value === 'employee' ? 'block' : 'none'; };
         
-        window.saveUserEdit = () => {
+        window.saveUserEdit = async () => {
             const userId = document.getElementById('edit-user-id').value;
             const u = users.find(x => x.id === userId); if(!u) return;
             
@@ -1424,10 +1501,18 @@
             u.variableSalary = parseFloat(document.getElementById('edit-user-var-salary').value) || 0;
             u.managerId = u.role === 'employee' ? document.getElementById('edit-user-manager').value : null;
             
-            DB.set('users', users); document.getElementById('edit-user-modal').classList.add('hidden'); renderDashboard(); showToast("تم تحديث الصلاحيات والرواتب", "🔐");
+            await updateDoc(doc(db, "users", userId), {
+                name: u.name, role: u.role, baseSalary: u.baseSalary, variableSalary: u.variableSalary, managerId: u.managerId
+            });
+
+            document.getElementById('edit-user-modal').classList.add('hidden'); 
+            renderDashboard(); 
+            showToast("تم تحديث بيانات الموظف بنجاح", "🔐");
         };
 
-        window.onload = () => { loadLocalData(); document.getElementById('login-panel').classList.remove('hidden'); };
+        window.onload = () => { 
+            document.getElementById('login-panel').classList.remove('hidden'); 
+        };
     </script>
 </body>
 </html>
