@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النظام المتكامل لإدارة التقييمات والأداء - مركز التدريب الإقليمي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background-color: #f4f7f6;
+        }
+        /* الألوان الرسمية للمؤسسة */
+        .bg-rctws-primary { background-color: #0c3359; }
+        .bg-rctws-secondary { background-color: #1a5b8e; }
+        .bg-rctws-accent { background-color: #d4af37; }
+        .text-rctws-primary { color: #0c3359; }
+        .text-rctws-accent { color: #d4af37; }
+        .border-rctws-primary { border-color: #0c3359; }
+        
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .glass-card {
+            background: white;
+            border: 1px solid rgba(200, 210, 220, 0.6);
+            box-shadow: 0 8px 30px rgba(12, 51, 89, 0.04);
+            border-radius: 1.5rem;
+        }
+        
+        select, input, textarea {
+            border: 1px solid #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        select:focus, input:focus, textarea:focus {
+            border-color: #1a5b8e;
+            box-shadow: 0 0 0 3px rgba(26, 91, 142, 0.1);
+            outline: none;
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%230c3359' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: left 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-left: 2.5rem;
+            appearance: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- التنبيهات -->
+    <div id="custom-toast" class="fixed bottom-5 left-5 z-50 bg-rctws-primary text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 max-w-md transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none border-r-4 border-rctws-accent">
+        <span id="toast-icon" class="text-xl">💡</span>
+        <p id="toast-message" class="text-sm font-bold leading-relaxed"></p>
+    </div>
+
+    <!-- شريط التنقل العلوي -->
+    <nav class="bg-rctws-primary text-white shadow-xl sticky top-0 z-40 border-b-4 border-rctws-accent">
+        <div class="container mx-auto px-4 py-3 flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-white p-1.5 rounded-xl w-14 h-14 flex items-center justify-center font-black text-rctws-primary shadow-inner text-3xl border border-slate-200">💧</div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-extrabold leading-tight tracking-wide text-white drop-shadow-md">مركز التدريب الإقليمي للموارد المائية والري</h1>
+                    <p class="text-xs md:text-sm text-rctws-accent font-bold mt-1 tracking-wide">نظام تخطيط الموارد والتقييم المؤسسي (ERP)</p>
+                </div>
+            </div>
+            
+            <div id="user-tools-bar" class="hidden flex-wrap items-center justify-center gap-3">
+                <div class="bg-rctws-secondary border border-white/20 p-2 rounded-xl flex items-center gap-2 text-xs shadow-inner">
+                    <span class="font-bold text-white/80">تاريخ النظام:</span>
+                    <input type="date" id="system-date" class="text-rctws-primary p-1.5 rounded-lg border-none font-bold text-xs bg-white shadow-sm cursor-pointer w-32">
+                </div>
+
+                <div class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/10 shadow-inner">
+                    <div class="text-left">
+                        <span id="logged-user-name" class="font-black block text-sm text-white"></span>
+                        <span id="logged-user-role" class="text-[10px] bg-rctws-accent text-rctws-primary px-2 py-0.5 rounded font-black block w-fit mt-1 shadow-sm"></span>
+                    </div>
+                    <button id="logout-btn" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition shadow-md border border-rose-800">تسجيل خروج</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 md:p-6 pb-20">
+        
+        <!-- شاشة تسجيل الدخول -->
+        <div id="login-panel" class="max-w-md mx-auto glass-card p-8 mt-10 md:mt-16 fade-in">
+            <div class="text-center mb-8">
+                <div class="bg-rctws-primary w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-slate-200">
+                    <span class="text-4xl text-rctws-accent">🏛️</span>
+                </div>
+                <h2 class="text-2xl font-black text-rctws-primary mb-2">بوابة الدخول الموحدة</h2>
+                <p class="text-sm text-slate-500 font-bold">تسجيل الدخول مؤمن بواسطة Firebase Auth</p>
+            </div>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-rctws-primary mb-1.5">البريد الإلكتروني المؤسسي</label>
+                    <input type="email" id="email-input" value="admin@rctws.com" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-rctws-primary mb-1.5">كلمة المرور</label>
+                    <input type="password" id="password-input" value="adminRCTWS" class="w-full rounded-xl p-3 shadow-sm font-bold bg-slate-50">
+                </div>
+                <button id="login-submit-btn" class="w-full bg-rctws-primary hover:bg-rctws-secondary text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-rctws-primary/30 transition duration-200">تسجيل الدخول</button>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-slate-200">
+                <div class="text-[11px] text-right text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner space-y-2 leading-relaxed">
+                    <p class="font-black text-slate-800 mb-1">حسابات الإدارات الحقيقية (باسوورد للجميع: 123456):</p>
+                    <p>👑 <b>رئيس المركز:</b> admin@rctws.com (Pass: adminRCTWS)</p>
+                    <p>⚖️ <b>مدير الشئون القانونية:</b> b_elsayed@rctws.com</p>
+                    <p>🗂️ <b>مدير المحفوظات:</b> h_fawzy@rctws.com</p>
+                    <p>🔬 <b>مدير المعامل:</b> r_amer@rctws.com</p>
+                    <p>👨‍💻 <b>موظف قانوني:</b> h_fathy@rctws.com</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-workspace" class="hidden flex-col gap-8 fade-in mt-4">
+            
+            <!-- ================= أولاً: لوحة الموظف ================= -->
+            <div id="employee-dashboard" class="hidden flex-col gap-6 fade-in">
+                
+                <!-- سجل الحضور والانصراف (المرتبط بالراتب المتغير) -->
+                <div class="glass-card p-6 border-t-4 border-t-rctws-secondary">
+                    <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                        <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2"><span>⏱️</span> تسجيل الحضور والانصراف اليومي</h3>
+                        <span id="today-date-display" class="bg-slate-100 text-rctws-primary border border-slate-200 px-3 py-1 rounded-lg text-sm font-black"></span>
+                    </div>
+                    
+                    <div id="weekend-alert" class="hidden bg-slate-100 border border-slate-300 text-slate-600 p-4 rounded-xl text-center font-black text-sm mb-4 shadow-inner">
+                        🌴 اليوم عطلة نهاية الأسبوع (جمعة / سبت). استمتع بوقتك!
+                    </div>
+
+                    <div id="attendance-controls" class="space-y-4">
+                        <div class="flex flex-col md:flex-row gap-4 items-center">
+                            <button id="btn-check-in" onclick="registerAttendance('in')" class="flex-1 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-4 rounded-xl shadow-md transition w-full disabled:opacity-50 disabled:bg-slate-300">تسجيل حضور العمل</button>
+                            <button id="btn-check-out" onclick="registerAttendance('out')" class="flex-1 bg-slate-800 hover:bg-black text-white font-black py-4 rounded-xl shadow-md transition w-full disabled:opacity-50 disabled:bg-slate-300" disabled>تسجيل الانصراف</button>
+                        </div>
+                        
+                        <div class="border-t border-slate-200 pt-4 flex flex-col md:flex-row gap-4 items-end bg-slate-50 p-4 rounded-xl">
+                            <div class="flex-1 w-full">
+                                <label class="block text-xs font-black text-slate-600 mb-2">تسجيل إجازة / غياب / مأمورية</label>
+                                <select id="leave-type-select" class="w-full rounded-xl p-3 text-sm font-bold bg-white">
+                                    <option value="إجازة عارضة">إجازة عارضة</option>
+                                    <option value="إجازة اعتيادية">إجازة اعتيادية</option>
+                                    <option value="إجازة مرضية">إجازة مرضية (بتقرير طبي)</option>
+                                    <option value="مأمورية عمل خارجية">مأمورية عمل خارجية</option>
+                                </select>
+                            </div>
+                            <button id="btn-leave" onclick="registerAttendance('leave')" class="bg-rctws-accent hover:bg-yellow-600 text-rctws-primary font-black py-3 px-6 rounded-xl shadow-sm transition w-full md:w-auto">تأكيد الإجازة/المأمورية</button>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p id="attendance-log-msg" class="text-sm font-black text-rctws-primary bg-sky-50 py-2 rounded-lg border border-sky-100 inline-block px-6"></p>
+                    </div>
+                </div>
+
+                <!-- تفاصيل الراتب (أساسي ومتغير) حسب قوانين المالية -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-card p-5 border-b-4 border-slate-400 text-center">
+                        <span class="text-xs text-slate-500 font-black block mb-2">الراتب الأساسي (ثابت)</span>
+                        <span class="text-2xl font-black text-slate-700" id="ui-emp-base-salary">0</span> <span class="text-xs font-bold text-slate-500">ج.م</span>
+                        <p class="text-[10px] text-slate-400 mt-1 font-bold">لا يتأثر بالتقييم</p>
+                    </div>
+                    <div class="glass-card p-5 border-b-4 border-rctws-accent text-center bg-yellow-50/30">
+                        <span class="text-xs text-rctws-primary font-black block mb-2">الحافز المتغير (الحد الأقصى)</span>
+                        <span class="text-2xl font-black text-rctws-accent" id="ui-emp-variable-salary">0</span> <span class="text-xs font-bold text-slate-500">ج.م</span>
+                        <p class="text-[10px] text-slate-500 mt-1 font-bold">يُصرف بناءً على نسبة إنجاز المهام والحضور</p>
+                    </div>
+                    <div class="glass-card p-5 border-b-4 border-emerald-500 text-center bg-emerald-50/50">
+                        <span class="text-xs text-emerald-800 font-black block mb-2">إجمالي الراتب المستحق (أساسي + متغير)</span>
+                        <span class="text-3xl font-black text-emerald-600" id="ui-emp-net-salary">0</span> <span class="text-xs font-bold text-emerald-600">ج.م</span>
+                        <p id="emp-salary-note" class="text-[10px] text-emerald-700 mt-1 font-black hidden">⭐ تم تطبيق قاعدة 90% (صرف كامل الحافز)</p>
+                    </div>
+                </div>
+
+                <div class="glass-card overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2">
+                            <span>💼</span> مهام العمل المسندة ونسبة الإنجاز
+                        </h3>
+                    </div>
+                    <div class="p-6 bg-white">
+                        <div id="employee-tasks-holder" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نافذة إتمام المهمة والملاحظات -->
+            <div id="task-completion-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm fade-in">
+                <div class="glass-card p-8 w-full max-w-md">
+                    <h3 class="font-black text-rctws-primary text-lg mb-4">تقرير إنجاز المهمة</h3>
+                    <p class="text-xs text-slate-500 font-bold mb-4">يرجى كتابة ما تم إنجازه اليوم بخصوص هذه المهمة ليتمكن المدير من تقييمك بدقة.</p>
+                    <input type="hidden" id="complete-task-id">
+                    <textarea id="task-completion-note" rows="4" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 mb-4" placeholder="مثال: قمت بصياغة العقد ومراجعته مع الإدارة المالية وتم إرساله بالبريد..."></textarea>
+                    <div class="flex gap-3">
+                        <button onclick="confirmTaskCompletion()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 rounded-xl shadow-md transition">تأكيد التسليم</button>
+                        <button onclick="closeCompletionModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-black py-3 rounded-xl transition">إلغاء</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= ثانياً: لوحة المدير المباشر ================= -->
+            <div id="manager-dashboard" class="hidden flex-col gap-6 fade-in">
+                
+                <!-- تقييم الحضور والانصراف -->
+                <div class="glass-card overflow-hidden">
+                    <div class="bg-rctws-primary px-6 py-4 border-b border-rctws-primary flex items-center justify-between text-white">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">⏱️</span>
+                            <h3 class="font-black text-lg">سجل وتقييم الحضور والانصراف</h3>
+                        </div>
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-lg font-bold" id="mgr-today-date"></span>
+                    </div>
+                    <div class="p-4 bg-yellow-50/50 border-b border-yellow-100 text-xs font-bold text-yellow-800">
+                        ملاحظة: تقييم الحضور يمثل <b>20%</b> من إجمالي الحافز المتغير للموظف تلقائياً. يرجى التقييم من 100 لليوم الحالي.
+                    </div>
+                    <div class="overflow-x-auto p-4">
+                        <table class="w-full text-right border-collapse text-sm">
+                            <thead>
+                                <tr class="text-slate-500 text-xs font-black border-b border-slate-200">
+                                    <th class="p-3">الموظف</th>
+                                    <th class="p-3">الحضور</th>
+                                    <th class="p-3">الانصراف</th>
+                                    <th class="p-3">الحالة / الإجازة</th>
+                                    <th class="p-3 text-center w-48">التقييم اليومي (للحضور)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manager-attendance-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- إسناد المهام (مربوطة بنسبة 80% من الحافز) -->
+                <div class="glass-card p-6" id="manager-assign-area">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-100 pb-4 gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-rctws-accent/20 p-2 rounded-lg text-rctws-accent text-xl">🎯</div>
+                            <div>
+                                <h3 class="text-xl font-black text-rctws-primary">إسناد المهام الدورية للفريق</h3>
+                                <p class="text-xs font-bold text-slate-500 mt-1">المهام تمثل 80% من قيمة الحافز المتغير للموظف.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="lg:col-span-2">
+                            <label class="block text-xs font-black text-slate-600 mb-2">الموظف المكلف</label>
+                            <select id="assign-employee-select" class="w-full rounded-xl p-3 text-sm font-bold bg-white shadow-sm"></select>
+                        </div>
+                        <div class="lg:col-span-3">
+                            <label class="block text-xs font-black text-slate-600 mb-2">المهمة (من مهام الإدارة)</label>
+                            <select id="assign-template-select" class="w-full rounded-xl p-3 text-sm font-bold bg-white shadow-sm"></select>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label class="block text-xs font-black text-slate-600 mb-2">دورية المهمة</label>
+                            <select id="assign-frequency" class="w-full rounded-xl p-3 text-sm font-bold bg-white shadow-sm">
+                                <option value="يومية">يومية</option>
+                                <option value="أسبوعية">أسبوعية</option>
+                                <option value="شهرية" selected>شهرية</option>
+                                <option value="ربع سنوية">ربع سنوية</option>
+                                <option value="نصف سنوية">نصف سنوية</option>
+                                <option value="سنوية">سنوية</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label class="block text-xs font-black text-slate-600 mb-2">تاريخ الاستحقاق (Deadline)</label>
+                            <input type="date" id="assign-deadline" class="w-full rounded-xl p-3 text-sm font-bold bg-white shadow-sm">
+                        </div>
+                        <div class="lg:col-span-1">
+                            <label class="block text-xs font-black text-slate-600 mb-2">الوزن (%)</label>
+                            <input type="number" id="assign-weight-input" min="1" max="100" placeholder="مثال: 30" class="w-full rounded-xl p-3 text-sm font-bold bg-white text-center shadow-sm">
+                        </div>
+                        <div class="lg:col-span-2">
+                            <button id="assign-submit-btn" class="w-full bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 rounded-xl shadow-md transition text-sm">إسناد</button>
+                        </div>
+                    </div>
+                    
+                    <div id="balancing-status-bar" class="mt-6 p-5 bg-white rounded-2xl border border-slate-200 hidden fade-in shadow-sm">
+                        <div class="flex justify-between items-center text-xs font-black text-slate-600 mb-3">
+                            <span>إجمالي الأوزان المالية للمهام المسندة للموظف (من أصل 100%):</span>
+                            <span id="balancing-percentage-text" class="text-sm bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden border border-slate-200">
+                            <div id="balancing-fill" class="bg-rctws-secondary h-full rounded-full transition-all duration-700 ease-out relative" style="width: 0%"></div>
+                        </div>
+                        <div id="balancing-error-msg" class="mt-4 hidden fade-in">
+                            <div class="bg-rose-50 border border-rose-200 p-4 rounded-xl">
+                                <p class="text-rose-700 text-sm font-black flex items-center gap-2">
+                                    <span>🛑</span> تنبيه: الأوزان تتجاوز 100%. لن يتم احتساب الزيادة في الراتب.
+                                </p>
+                                <button onclick="autoRebalanceWeights()" class="mt-3 bg-rctws-accent hover:bg-yellow-600 text-rctws-primary font-black px-4 py-2 rounded-lg text-xs shadow-sm w-full md:w-auto transition">
+                                    إعادة توزيع الأوزان برمجياً بالتساوي على جميع المهام
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                        <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2"><span>📊</span> تقييم أداء وتقارير الفريق</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-white border-b border-slate-200 text-slate-500 text-xs font-black">
+                                    <th class="p-5">الموظف</th>
+                                    <th class="p-5 w-1/3">المهمة وتفاصيلها</th>
+                                    <th class="p-5 w-1/4">ماذا أنجز اليوم؟ (تقرير الموظف)</th>
+                                    <th class="p-5 text-center">الوزن</th>
+                                    <th class="p-5">حالة التسليم</th>
+                                    <th class="p-5 text-center">التقييم الفعلي</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manager-team-table-body" class="divide-y divide-slate-100 bg-slate-50/20"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= ثالثاً: لوحة رئيس المركز (Admin) ================= -->
+            <div id="admin-dashboard" class="hidden flex-col gap-8 fade-in">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass-card border-rctws-accent border-b-4 bg-gradient-to-br from-white to-[#fffdf5] p-6 relative overflow-hidden flex flex-col justify-center text-center">
+                        <div class="text-5xl mb-2">🏆</div>
+                        <h3 class="text-slate-500 font-black text-sm mb-1">نجم المركز (الموظف الأعلى تقييماً)</h3>
+                        <p id="admin-stat-best-emp" class="text-2xl font-black text-rctws-primary mt-2">-</p>
+                        <p id="admin-stat-best-emp-score" class="text-sm font-bold text-rctws-accent mt-1"></p>
+                    </div>
+                    <div class="glass-card border-slate-300 border-b-4 bg-gradient-to-br from-white to-slate-50 p-6 relative overflow-hidden flex flex-col justify-center text-center">
+                        <div class="text-5xl mb-2">🎖️</div>
+                        <h3 class="text-slate-500 font-black text-sm mb-1">أفضل إدارة (المدير المثالي)</h3>
+                        <p id="admin-stat-best-mgr" class="text-2xl font-black text-rctws-primary mt-2">-</p>
+                        <p id="admin-stat-best-mgr-score" class="text-sm font-bold text-slate-500 mt-1"></p>
+                    </div>
+                    <div class="glass-card p-6 flex flex-col justify-center">
+                        <h3 class="text-slate-500 font-black text-sm mb-4 border-b pb-2">مؤشرات الأداء العامة للمركز</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-bold text-slate-600">إجمالي المهام النشطة:</span>
+                                <span id="admin-stat-total-tasks" class="font-black text-lg text-rctws-primary">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-bold text-slate-600">المهام المنجزة والمقيمة:</span>
+                                <span id="admin-stat-completed" class="font-black text-lg text-emerald-600">0</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2 mt-2 border border-slate-200">
+                                <div id="admin-stat-progress" class="bg-rctws-accent h-full rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- قسم التظلمات -->
+                <div class="glass-card border-rose-200 border-2 overflow-hidden shadow-lg" id="admin-complaints-area">
+                    <div class="bg-rose-50 px-6 py-4 border-b border-rose-100 flex items-center gap-3">
+                        <span class="text-2xl">⚖️</span>
+                        <div>
+                            <h3 class="font-black text-rose-900 text-lg">تظلمات وشكاوى الموظفين</h3>
+                            <p class="text-[11px] font-bold text-rose-700 mt-0.5">صلاحية حصرية لرئيس المركز للبت في شكاوى التقييم المالي والأداء.</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto p-4">
+                        <table class="w-full text-right border-collapse text-sm">
+                            <thead>
+                                <tr class="text-rose-800 text-xs font-black border-b border-rose-200">
+                                    <th class="p-3">الموظف الشاكي</th>
+                                    <th class="p-3">المهمة والدورية</th>
+                                    <th class="p-3 text-center">تقييم المدير</th>
+                                    <th class="p-3">نص الشكوى المقدمة</th>
+                                    <th class="p-3 text-center w-64">قرار رئيس المركز</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-complaints-body" class="divide-y divide-rose-50"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-rctws-secondary/10 p-2 rounded-lg text-rctws-secondary text-xl">👥</div>
+                            <h3 class="text-xl font-black text-rctws-primary">إدارة الهيكل الوظيفي والمستخدمين</h3>
+                        </div>
+                        <button onclick="openCreateUserModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-lg text-sm shadow-md transition flex items-center gap-2">
+                            <span>➕</span> إضافة مستخدم جديد (مربوط بـ Firebase)
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs font-black">
+                                    <th class="p-4">الاسم</th>
+                                    <th class="p-4">البريد الإلكتروني</th>
+                                    <th class="p-4">الدور والإدارة</th>
+                                    <th class="p-4 text-center">الراتب الأساسي</th>
+                                    <th class="p-4 text-center">الحافز المتغير</th>
+                                    <th class="p-4 text-center">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-card overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h3 class="font-black text-lg text-rctws-primary flex items-center gap-2"><span>🔎</span> الرقابة الشاملة على المهام (سجل كامل)</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-white border-b border-slate-200 text-slate-500 text-xs font-black">
+                                    <th class="p-4">المدير</th>
+                                    <th class="p-4">الموظف</th>
+                                    <th class="p-4">المهمة وتصنيفها</th>
+                                    <th class="p-4">تاريخ الاستحقاق</th>
+                                    <th class="p-4 text-center">الوزن</th>
+                                    <th class="p-4 text-center">الحالة</th>
+                                    <th class="p-4 text-center">التقييم</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-full-report-table" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- نوافذ منبثقة (Modals) -->
+
+    <!-- نافذة إضافة مستخدم جديد بـ Firebase -->
+    <div id="create-user-modal" class="hidden fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm">
+        <div class="glass-card p-8 w-full max-w-lg relative bg-white">
+            <h3 class="font-black text-rctws-primary text-xl mb-2 flex items-center gap-2"><span>➕</span> إضافة مستخدم جديد</h3>
+            <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-[10px] font-bold text-amber-800 mb-4 leading-relaxed">
+                ⚠️ <b>ملاحظة هامة (قيد Firebase الأمني):</b> لأن إنشاء حساب حقيقي يتطلب مصادقة الواجهة الأمامية، سيقوم النظام بإنشاء الحساب في سيرفرات Firebase ثم <b>تسجيل خروجك تلقائياً</b>. ستحتاج لتسجيل الدخول مرة أخرى بحسابك (الأدمن).
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="col-span-2">
+                    <label class="block text-xs font-black text-slate-500 mb-1">الاسم الرباعي</label>
+                    <input type="text" id="new-user-name" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 border-slate-200">
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-1">البريد الإلكتروني (الدخول)</label>
+                    <input type="email" id="new-user-email" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 border-slate-200">
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-1">كلمة المرور</label>
+                    <input type="text" id="new-user-password" value="123456" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50 border-slate-200">
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-1">الإدارة التابع لها</label>
+                    <select id="new-user-dept" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50">
+                        <option value="الشئون القانونية">الشئون القانونية</option>
+                        <option value="المحفوظات">المحفوظات</option>
+                        <option value="المعامل">المعامل</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-1">الدور الوظيفي</label>
+                    <select id="new-user-role" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50" onchange="document.getElementById('new-user-mgr-box').style.display = this.value === 'employee' ? 'block' : 'none'">
+                        <option value="employee">موظف</option>
+                        <option value="manager">مدير إدارة</option>
+                        <option value="admin">إدارة عليا (أدمن)</option>
+                    </select>
+                </div>
+                <div id="new-user-mgr-box" class="col-span-2">
+                    <label class="block text-xs font-black text-slate-500 mb-1">المدير المباشر</label>
+                    <select id="new-user-manager" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-1">الراتب الأساسي (ثابت)</label>
+                    <input type="number" id="new-user-base" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50" value="4000">
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-1">الحافز المتغير (أقصى)</label>
+                    <input type="number" id="new-user-var" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50" value="3000">
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button id="btn-submit-create-user" class="flex-1 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 rounded-xl transition shadow">إنشاء الحساب</button>
+                <button onclick="document.getElementById('create-user-modal').classList.add('hidden')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black py-3 rounded-xl transition">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- تعديل المستخدم (للأدمن) -->
+    <div id="edit-user-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm">
+        <div class="glass-card p-8 w-full max-w-md relative bg-white">
+            <h3 class="font-black text-rctws-primary text-xl mb-6 border-b border-slate-100 pb-3">تعديل الرواتب والصلاحيات</h3>
+            <input type="hidden" id="edit-user-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-black text-slate-500 mb-2">الاسم</label>
+                    <input type="text" id="edit-user-name" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-black text-slate-500 mb-2">الراتب الأساسي</label>
+                        <input type="number" id="edit-user-base-salary" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-500 mb-2">الحافز المتغير</label>
+                        <input type="number" id="edit-user-var-salary" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-black text-slate-500 mb-2">الدور / الصلاحية</label>
+                        <select id="edit-user-role" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50" onchange="document.getElementById('edit-user-manager-container').style.display = this.value === 'employee' ? 'block' : 'none'">
+                            <option value="employee">موظف</option>
+                            <option value="manager">مدير إدارة</option>
+                            <option value="admin">إدارة عليا</option>
+                        </select>
+                    </div>
+                    <div id="edit-user-manager-container">
+                        <label class="block text-xs font-black text-slate-500 mb-2">المدير المباشر</label>
+                        <select id="edit-user-manager" class="w-full rounded-xl p-3 text-sm font-bold bg-slate-50"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 flex gap-3">
+                <button onclick="saveUserEdit()" class="flex-1 bg-rctws-primary hover:bg-rctws-secondary text-white font-black py-3 rounded-xl transition shadow">حفظ التعديلات</button>
+                <button onclick="document.getElementById('edit-user-modal').classList.add('hidden')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black py-3 rounded-xl transition">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- السكربت -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyTasPs776gFXXIxIVs4UPn19gYq4BGZ0",
+            authDomain: "rctws-6cf4a.firebaseapp.com",
+            projectId: "rctws-6cf4a",
+            storageBucket: "rctws-6cf4a.firebasestorage.app",
+            messagingSenderId: "724193361922",
+            appId: "1:724193361922:web:cc65813b07f077a663e71b",
+            measurementId: "G-WCLP61V0SH"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // 1. المتغيرات وإعداد قاعدة البيانات الافتراضية بناءً على الملفات
+        const DB_PREFIX = 'rctws_erp_v1_'; 
+        let currentUser = null, users = [], tasks = [], templates = [], systemDate = '', attendanceLogs = [];
+
+        const DB = {
+            get: (key) => { const data = localStorage.getItem(`${DB_PREFIX}${key}`); return data ? JSON.parse(data) : null; },
+            set: (key, val) => { localStorage.setItem(`${DB_PREFIX}${key}`, JSON.stringify(val)); },
+            seed: () => {
+                // الهيكل الوظيفي الحقيقي المستخرج من الملفات المرفقة
+                const defaultUsers = [
+                    { id: 'admin1', email: 'admin@rctws.com', name: 'أ.د سلوى أبو العلا', role: 'admin', department: 'الإدارة العليا', phone: '100', baseSalary: 15000, variableSalary: 10000 },
+                    
+                    // الشئون القانونية
+                    { id: 'mgr_legal', email: 'b_elsayed@rctws.com', name: 'أ. بخيت السيد مرسي', role: 'manager', department: 'الشئون القانونية', phone: '200', baseSalary: 7000, variableSalary: 5000 },
+                    { id: 'emp_legal1', email: 'h_fathy@rctws.com', name: 'أ. هبه فتحي حامد', role: 'employee', managerId: 'mgr_legal', department: 'الشئون القانونية', phone: '201', baseSalary: 4500, variableSalary: 3500 },
+                    { id: 'emp_legal2', email: 's_ibrahim@rctws.com', name: 'أ. صابر إبراهيم رفاعي', role: 'employee', managerId: 'mgr_legal', department: 'الشئون القانونية', phone: '202', baseSalary: 4000, variableSalary: 3000 },
+                    
+                    // المحفوظات
+                    { id: 'mgr_arch', email: 'h_fawzy@rctws.com', name: 'أ. هاله فوزي عبدالوهاب', role: 'manager', department: 'المحفوظات', phone: '300', baseSalary: 6000, variableSalary: 4000 },
+                    { id: 'emp_arch1', email: 'm_adel@rctws.com', name: 'أ. محمد عادل محمد', role: 'employee', managerId: 'mgr_arch', department: 'المحفوظات', phone: '301', baseSalary: 3500, variableSalary: 2500 },
+                    { id: 'emp_arch2', email: 's_ahmed@rctws.com', name: 'أ. سمية أحمد', role: 'employee', managerId: 'mgr_arch', department: 'المحفوظات', phone: '302', baseSalary: 3500, variableSalary: 2500 },
+
+                    // المعامل
+                    { id: 'mgr_lab', email: 'r_amer@rctws.com', name: 'أ. رضا محمد عامر', role: 'manager', department: 'المعامل', phone: '400', baseSalary: 6500, variableSalary: 4500 }
+                ];
+
+                // المهام المستخرجة من الملفات
+                const defaultTemplates = [
+                    // شئون قانونية
+                    { id: 'tpl_l1', title: 'دراسة ومراجعة العقود وإبداء الرأي' },
+                    { id: 'tpl_l2', title: 'التحقيق في المذكرات الواردة' },
+                    { id: 'tpl_l3', title: 'حضور لجان الفتح الفني والمالي' },
+                    { id: 'tpl_l4', title: 'الرد على دعاوى مجلس الدولة والنيابة' },
+                    // محفوظات
+                    { id: 'tpl_a1', title: 'استلام البوسطة الواردة والصادرة وتسجيلها' },
+                    { id: 'tpl_a2', title: 'توزيع البوسطة على الإدارات' },
+                    { id: 'tpl_a3', title: 'حفظ وأرشفة المستندات (سكانر + ملفات)' },
+                    // معامل
+                    { id: 'tpl_b1', title: 'فتح المعمل والتأكد من النظافة والسلامة' },
+                    { id: 'tpl_b2', title: 'تحضير الأجهزة للتجارب' }
+                ];
+
+                DB.set('users', defaultUsers); DB.set('templates', defaultTemplates); DB.set('tasks', []); 
+                const d = new Date();
+                // If weekend, default to Monday
+                if(d.getDay() === 5) d.setDate(d.getDate() + 2);
+                if(d.getDay() === 6) d.setDate(d.getDate() + 1);
+                DB.set('simDate', d.toISOString().split('T')[0]); 
+                DB.set('attendance', []);
+            }
+        };
+
+        window.showToast = (msg, icon = "💡") => {
+            const toast = document.getElementById('custom-toast');
+            document.getElementById('toast-icon').innerText = icon; document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'), 4000);
+        }
+
+        function loadLocalData() {
+            users = DB.get('users'); tasks = DB.get('tasks'); templates = DB.get('templates'); systemDate = DB.get('simDate'); attendanceLogs = DB.get('attendance') || [];
+            if (!users || !templates) { DB.seed(); users = DB.get('users'); tasks = DB.get('tasks'); templates = DB.get('templates'); systemDate = DB.get('simDate'); attendanceLogs = []; }
+            document.getElementById('system-date').value = systemDate;
+        }
+
+        // ================= الدخول وإدارة الجلسات =================
+        document.getElementById('login-submit-btn').addEventListener('click', async () => {
+            const emailIn = document.getElementById('email-input').value.trim();
+            const passwordIn = document.getElementById('password-input').value;
+            const btn = document.getElementById('login-submit-btn');
+            
+            if (!emailIn || !passwordIn) return showToast("يرجى إكمال البيانات.", "⚠️");
+            
+            const originalText = btn.innerText;
+            btn.innerText = 'جاري التحقق أمنياً...'; btn.disabled = true;
+
+            try {
+                await signInWithEmailAndPassword(auth, emailIn, passwordIn);
+                loadLocalData(); 
+                const matchedUser = users.find(u => u.email.toLowerCase() === emailIn.toLowerCase());
+
+                if (matchedUser) {
+                    currentUser = matchedUser;
+                    initWorkspace();
+                } else {
+                    showToast("حسابك صحيح في Firebase لكن غير مسجل في الهيكل الإداري للـ ERP.", "⚠️");
+                    await signOut(auth);
+                }
+            } catch (error) {
+                showToast("البريد الإلكتروني أو كلمة المرور غير صحيحة.", "❌");
+            } finally {
+                btn.innerText = originalText; btn.disabled = false;
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await signOut(auth);
+            currentUser = null;
+            document.getElementById('main-workspace').classList.add('hidden'); document.getElementById('main-workspace').classList.remove('flex');
+            document.getElementById('user-tools-bar').classList.add('hidden'); document.getElementById('user-tools-bar').classList.remove('flex');
+            document.getElementById('login-panel').classList.remove('hidden');
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user && !currentUser) {
+                loadLocalData();
+                const matchedUser = users.find(u => u.email.toLowerCase() === user.email.toLowerCase());
+                if (matchedUser) { currentUser = matchedUser; initWorkspace(); }
+            }
+        });
+
+        function initWorkspace() {
+            document.getElementById('login-panel').classList.add('hidden');
+            document.getElementById('main-workspace').classList.remove('hidden'); document.getElementById('main-workspace').classList.add('flex');
+            document.getElementById('user-tools-bar').classList.remove('hidden'); document.getElementById('user-tools-bar').classList.add('flex');
+            document.getElementById('logged-user-name').innerText = currentUser.name;
+            
+            const roleMap = { 'admin': 'رئيس المركز (صلاحيات مطلقة)', 'manager': 'مدير إدارة', 'employee': 'موظف' };
+            document.getElementById('logged-user-role').innerText = roleMap[currentUser.role];
+            
+            renderDashboard();
+        }
+
+        document.getElementById('system-date').addEventListener('change', (e) => {
+            systemDate = e.target.value; DB.set('simDate', systemDate);
+            showToast(`تاريخ العمل الآن: ${systemDate}`, "⏰");
+            renderDashboard();
+        });
+
+        window.renderDashboard = () => {
+            loadLocalData();
+            ['employee-dashboard', 'manager-dashboard', 'admin-dashboard'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+            });
+
+            if (currentUser.role === 'employee') renderEmployeeDashboard();
+            else if (currentUser.role === 'manager') renderManagerDashboard();
+            else if (currentUser.role === 'admin') renderAdminDashboard();
+        }
+
+        // ================= الموظف (التنفيذ، الحضور، الرواتب) =================
+        window.registerAttendance = (type) => {
+            const today = systemDate;
+            const nowTime = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            let todayLog = attendanceLogs.find(a => a.userId === currentUser.id && a.date === today);
+            
+            if (type === 'leave') {
+                const lType = document.getElementById('leave-type-select').value;
+                if(todayLog && todayLog.checkIn) return showToast("لا يمكن تسجيل إجازة بعد إثبات الحضور.", "❌");
+                if(!todayLog) attendanceLogs.push({ userId: currentUser.id, managerId: currentUser.managerId, date: today, checkIn: null, checkOut: null, status: lType, managerEval: null });
+                else todayLog.status = lType;
+                showToast(`تم تسجيل (${lType}) بنجاح، بانتظار اعتماد المدير.`, "🌴");
+            } 
+            else if (type === 'in' && (!todayLog || todayLog.status !== 'حضور')) {
+                if(!todayLog) attendanceLogs.push({ userId: currentUser.id, managerId: currentUser.managerId, date: today, checkIn: nowTime, checkOut: null, status: 'حضور', managerEval: null });
+                else { todayLog.checkIn = nowTime; todayLog.status = 'حضور'; }
+                showToast(`تم إثبات الحضور الساعة ${nowTime}`, "✅");
+            } 
+            else if (type === 'out' && todayLog && !todayLog.checkOut && todayLog.status === 'حضور') {
+                todayLog.checkOut = nowTime;
+                showToast(`تم إثبات الانصراف الساعة ${nowTime}`, "👋");
+            }
+            DB.set('attendance', attendanceLogs); renderDashboard();
+        };
+
+        function renderEmployeeDashboard() {
+            const dash = document.getElementById('employee-dashboard'); dash.classList.remove('hidden'); dash.classList.add('flex');
+            
+            // إدارة عطلة نهاية الأسبوع
+            const dayOfWeek = new Date(systemDate).getDay();
+            const isWeekend = (dayOfWeek === 5 || dayOfWeek === 6); // 5 Friday, 6 Saturday
+            
+            document.getElementById('today-date-display').innerText = systemDate;
+            const btnIn = document.getElementById('btn-check-in'), btnOut = document.getElementById('btn-check-out'), btnLeave = document.getElementById('btn-leave'), logMsg = document.getElementById('attendance-log-msg');
+            
+            if(isWeekend) {
+                document.getElementById('weekend-alert').classList.remove('hidden');
+                document.getElementById('attendance-controls').classList.add('hidden');
+                logMsg.innerText = "عطلة نهاية الأسبوع.";
+            } else {
+                document.getElementById('weekend-alert').classList.add('hidden');
+                document.getElementById('attendance-controls').classList.remove('hidden');
+                
+                const todayLog = attendanceLogs.find(a => a.userId === currentUser.id && a.date === systemDate);
+                
+                if (!todayLog) { 
+                    btnIn.disabled = false; btnOut.disabled = true; btnLeave.disabled = false;
+                    logMsg.innerText = "برجاء إثبات الحضور أو تسجيل إجازة."; 
+                } 
+                else if (todayLog.status !== 'حضور') {
+                    btnIn.disabled = true; btnOut.disabled = true; btnLeave.disabled = true;
+                    logMsg.innerText = `حالة اليوم: ${todayLog.status}`;
+                }
+                else if (!todayLog.checkOut) { 
+                    btnIn.disabled = true; btnOut.disabled = false; btnLeave.disabled = true;
+                    logMsg.innerText = `حضور مسجل الساعة: ${todayLog.checkIn}`; 
+                } 
+                else { 
+                    btnIn.disabled = true; btnOut.disabled = true; btnLeave.disabled = true;
+                    logMsg.innerText = `يوم عمل مكتمل (حضور: ${todayLog.checkIn} | انصراف: ${todayLog.checkOut})`; 
+                }
+            }
+
+            // المهام والتقييم
+            const myTasks = tasks.filter(t => t.employeeId === currentUser.id);
+            const listHolder = document.getElementById('employee-tasks-holder'); listHolder.innerHTML = '';
+            
+            let tasksScorePercent = 0; 
+            
+            if (myTasks.length === 0) listHolder.innerHTML = `<p class="text-center text-slate-400 text-sm font-bold p-4">لا يوجد مهام مسندة إليك حالياً.</p>`;
+
+            myTasks.forEach(task => {
+                let cardAction = '', statusHtml = '';
+                
+                if (task.status === 'evaluated') {
+                    tasksScorePercent += (task.evaluation / 100) * task.weight;
+                    statusHtml = `<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-1 rounded">معتمدة: ${task.evaluation}%</span>`;
+                    if(!task.complaint && task.evaluation < 100) cardAction = `<button onclick="submitComplaint('${task.id}')" class="text-[10px] text-rose-500 hover:text-rose-700 font-bold underline mt-2">تقديم تظلم للسيد رئيس المركز</button>`;
+                    else if(task.complaint) cardAction = `<span class="text-[10px] text-amber-600 font-bold mt-2">تم تقديم تظلم</span>`;
+                } else if (task.locked) {
+                    statusHtml = `<span class="bg-rose-100 text-rose-800 text-[10px] font-black px-2 py-1 rounded">تأخير (تقييم 0 تلقائي)</span>`;
+                } else if (task.status === 'pending') {
+                    statusHtml = `<span class="bg-slate-100 text-slate-600 text-[10px] font-black px-2 py-1 rounded">جارية</span>`;
+                    cardAction = `<button onclick="openCompletionModal('${task.id}')" class="bg-rctws-primary hover:bg-rctws-secondary text-white font-bold px-4 py-2 rounded-lg text-xs shadow-md">أتممت العمل (كتابة تقرير)</button>`;
+                } else if (task.status === 'completed') {
+                    statusHtml = `<span class="bg-sky-100 text-sky-800 text-[10px] font-black px-2 py-1 rounded">في انتظار تقييم الإدارة</span>`;
+                }
+
+                const isLate = (systemDate > task.deadline && task.status === 'pending' && !task.locked);
+                const lateWarning = isLate ? `<span class="text-[10px] bg-rose-100 text-rose-700 font-black px-2 py-1 rounded ml-2">⚠️ متأخرة</span>` : '';
+
+                listHolder.innerHTML += `
+                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50 flex flex-col md:flex-row justify-between md:items-center hover:shadow-md transition gap-3">
+                        <div>
+                            <h4 class="font-black text-slate-800 text-sm mb-1">${task.title} <span class="text-xs text-slate-400 font-bold">(${task.frequency})</span></h4>
+                            <div class="flex items-center mt-2 flex-wrap gap-1">
+                                <span class="text-[10px] font-black text-rctws-accent bg-rctws-primary px-2 py-0.5 rounded">وزن مالي: ${task.weight}%</span>
+                                <span class="text-[10px] font-bold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">ميعاد التسليم: ${task.deadline}</span>
+                            </div>
+                            <div class="mt-3">${statusHtml} ${lateWarning}</div>
+                        </div>
+                        <div class="text-right md:text-left flex flex-col items-start md:items-end">
+                            <span class="text-[10px] text-slate-400 font-bold block">العائد المحقق من المهمة</span>
+                            <span class="text-xl font-black ${task.status === 'evaluated' ? 'text-emerald-600' : 'text-slate-300'}">${task.status === 'evaluated' ? ((task.evaluation/100)*task.weight).toFixed(1) : '0'}%</span>
+                            <div class="mt-2">${cardAction}</div>
+                        </div>
+                    </div>`;
+            });
+
+            // حساب الراتب بناءً على وزارة المالية
+            document.getElementById('ui-emp-base-salary').innerText = currentUser.baseSalary.toLocaleString();
+            document.getElementById('ui-emp-variable-salary').innerText = currentUser.variableSalary.toLocaleString();
+
+            const pendingExist = myTasks.some(t => ['pending', 'completed'].includes(t.status));
+            
+            // لحساب التقييم النهائي، نفرض أن المهام تمثل 80% من الحافز، والحضور 20%
+            // وللتبسيط الآن في الواجهة: نجمع نتيجة المهام (من 100).
+            let finalEvalPercent = tasksScorePercent; 
+            
+            // تفعيل قاعدة الـ 90% للحافز المتغير
+            if (finalEvalPercent >= 90 && !pendingExist) {
+                finalEvalPercent = 100;
+                document.getElementById('emp-salary-note').classList.remove('hidden');
+            } else {
+                document.getElementById('emp-salary-note').classList.add('hidden');
+            }
+
+            if (pendingExist) {
+                document.getElementById('ui-emp-net-salary').innerText = "...";
+                document.getElementById('ui-emp-net-salary').className = "text-xl font-bold text-slate-400 block mt-2";
+            } else {
+                const earnedVariable = currentUser.variableSalary * (finalEvalPercent / 100);
+                const finalNet = currentUser.baseSalary + earnedVariable;
+                document.getElementById('ui-emp-net-salary').innerText = Math.round(finalNet).toLocaleString();
+                document.getElementById('ui-emp-net-salary').className = "text-3xl font-black text-emerald-600";
+            }
+        }
+
+        window.openCompletionModal = (taskId) => {
+            document.getElementById('complete-task-id').value = taskId;
+            document.getElementById('task-completion-note').value = '';
+            document.getElementById('task-completion-modal').classList.remove('hidden');
+        };
+        window.closeCompletionModal = () => document.getElementById('task-completion-modal').classList.add('hidden');
+        
+        window.confirmTaskCompletion = () => {
+            const taskId = document.getElementById('complete-task-id').value;
+            const note = document.getElementById('task-completion-note').value.trim();
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            if (systemDate > task.deadline) {
+                task.status = 'evaluated'; task.evaluation = 0; task.locked = true; task.empNote = note;
+                showToast("تجاوزت الموعد النهائي (التقييم = 0%)", "❌");
+            } else {
+                task.status = 'completed'; task.empNote = note;
+                showToast("تم إرسال التقرير للمدير بنجاح", "✅");
+            }
+            DB.set('tasks', tasks); closeCompletionModal(); renderDashboard();
+        };
+
+        window.submitComplaint = (taskId) => {
+            const reason = prompt("اكتب نص التظلم لرفعه لمعالي رئيس المركز:");
+            if(reason) {
+                const t = tasks.find(x => x.id === taskId);
+                if(t) { t.complaint = reason; DB.set('tasks', tasks); renderDashboard(); showToast("تم رفع التظلم", "⚖️"); }
+            }
+        };
+
+        // ================= لوحة المدير المباشر =================
+        window.renderManagerDashboard = () => {
+            const dash = document.getElementById('manager-dashboard'); dash.classList.remove('hidden'); dash.classList.add('flex');
+            
+            // 1. تقييم الحضور
+            document.getElementById('mgr-today-date').innerText = systemDate;
+            const attBody = document.getElementById('manager-attendance-body'); attBody.innerHTML = '';
+            const myTeamIds = users.filter(u => u.managerId === currentUser.id).map(u => u.id);
+            const teamLogsToday = attendanceLogs.filter(a => a.date === systemDate && myTeamIds.includes(a.userId));
+            
+            if(myTeamIds.length === 0) attBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center">لا يوجد موظفين في إدارتك.</td></tr>`;
+            else {
+                myTeamIds.forEach(empId => {
+                    const emp = users.find(u => u.id === empId);
+                    const log = teamLogsToday.find(a => a.userId === empId);
+                    
+                    let status = "لم يحضر", timeIn = "-", timeOut = "-", evalHtml = "";
+                    if(log) {
+                        timeIn = log.checkIn || "-"; timeOut = log.checkOut || "-";
+                        if(log.status !== 'حضور') {
+                            status = `<span class="text-sky-600 font-bold">${log.status}</span>`;
+                        } else {
+                            status = `<span class="text-slate-600 font-bold">متواجد</span>`;
+                        }
+
+                        if(log.managerEval !== null) {
+                            evalHtml = `<span class="text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded">قُيمت: ${log.managerEval}%</span>`;
+                        } else {
+                            evalHtml = `<div class="flex gap-1 justify-center"><input type="number" id="eval-att-${empId}" class="w-14 border border-slate-300 rounded p-1 text-center text-xs" placeholder="%"><button onclick="evaluateAttendance('${empId}')" class="bg-rctws-primary text-white px-2 py-1 rounded text-[10px]">حفظ</button></div>`;
+                        }
+                    } else {
+                        status = `<span class="text-rose-600 font-bold">غياب بدون عذر</span>`;
+                        evalHtml = `<button onclick="evaluateAttendance('${empId}', 0)" class="bg-rose-500 text-white px-2 py-1 rounded text-[10px] w-full">خصم اليوم (0%)</button>`;
+                    }
+                    
+                    attBody.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-100"><td class="p-3 font-black text-slate-800">${emp.name}</td><td class="p-3">${timeIn}</td><td class="p-3">${timeOut}</td><td class="p-3 text-xs">${status}</td><td class="p-3">${evalHtml}</td></tr>`;
+                });
+            }
+
+            // 2. إسناد المهام
+            const empSelect = document.getElementById('assign-employee-select'); empSelect.innerHTML = '<option value="">-- اختر الموظف --</option>';
+            myTeamIds.forEach(id => { const emp = users.find(u=>u.id===id); empSelect.innerHTML += `<option value="${emp.id}">${emp.name}</option>`; });
+            
+            const tplSelect = document.getElementById('assign-template-select'); tplSelect.innerHTML = '<option value="">-- مهام الإدارة --</option>';
+            templates.forEach(tpl => { tplSelect.innerHTML += `<option value="${tpl.title}">${tpl.title}</option>`; });
+
+            empSelect.removeEventListener('change', checkManagerWeights); empSelect.addEventListener('change', checkManagerWeights);
+            document.getElementById('assign-weight-input').removeEventListener('input', checkManagerWeights); document.getElementById('assign-weight-input').addEventListener('input', checkManagerWeights);
+
+            // 3. تقييم المهام والاطلاع على تقارير الموظفين
+            const teamTasks = tasks.filter(t => t.managerId === currentUser.id);
+            const tbody = document.getElementById('manager-team-table-body'); tbody.innerHTML = '';
+            
+            if(teamTasks.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 font-bold">لا يوجد مهام مسندة حالياً.</td></tr>`;
+            
+            teamTasks.forEach(task => {
+                const targetEmp = users.find(u => u.id === task.employeeId);
+                let actionHtml = '';
+
+                if (task.locked) {
+                    actionHtml = `<span class="text-rose-600 text-xs font-black">قُيمت بـ 0 (تأخير)</span>`;
+                } else if (task.status === 'completed') {
+                    actionHtml = `<div class="flex items-center justify-center gap-1"><input type="number" id="eval-val-${task.id}" min="0" max="100" class="w-14 border border-emerald-300 rounded p-1 text-center font-bold text-xs"><button onclick="submitTaskEvaluation('${task.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-2 py-1.5 rounded text-[10px] shadow">اعتماد</button></div>`;
+                } else if (task.status === 'evaluated') {
+                    actionHtml = `<span class="text-emerald-600 font-black bg-emerald-50 px-3 py-1 rounded-lg">${task.evaluation}%</span>`;
+                } else {
+                    actionHtml = `<span class="text-slate-400 text-[10px] font-bold border border-slate-200 px-2 py-1 rounded">لم يُسلم بعد</span>`;
+                }
+
+                const empNoteDisplay = task.empNote ? `<div class="text-[10px] text-slate-600 bg-white border border-slate-200 p-2 rounded mt-1 shadow-inner leading-relaxed">📝 ${task.empNote}</div>` : '<span class="text-slate-300 text-xs">-</span>';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-4 font-black text-rctws-primary">${targetEmp ? targetEmp.name : '-'}</td>
+                        <td class="p-4 text-xs font-bold text-slate-700">
+                            ${task.title}
+                            <span class="block text-[10px] text-rctws-accent mt-0.5">موعد: ${task.deadline}</span>
+                        </td>
+                        <td class="p-4">${empNoteDisplay}</td>
+                        <td class="p-4 text-center font-black">${task.weight}%</td>
+                        <td class="p-4 text-xs font-bold">${task.status === 'completed' ? '<span class="text-sky-600">سلم التقرير</span>' : (task.status === 'evaluated' || task.locked ? 'منتهية' : 'جاري العمل')}</td>
+                        <td class="p-4 text-center">${actionHtml}</td>
+                    </tr>`;
+            });
+        }
+
+        window.evaluateAttendance = (empId, forcedEval = null) => {
+            let val = forcedEval !== null ? forcedEval : parseInt(document.getElementById(`eval-att-${empId}`).value);
+            if(isNaN(val) || val < 0 || val > 100) return;
+            
+            let log = attendanceLogs.find(a => a.userId === empId && a.date === systemDate);
+            if(!log) attendanceLogs.push({ userId: empId, managerId: currentUser.id, date: systemDate, checkIn: null, checkOut: null, managerEval: val });
+            else log.managerEval = val;
+            DB.set('attendance', attendanceLogs); renderDashboard();
+        }
+
+        window.checkManagerWeights = () => {
+            const empId = document.getElementById('assign-employee-select').value;
+            const weightInput = parseInt(document.getElementById('assign-weight-input').value) || 0;
+            const barBox = document.getElementById('balancing-status-bar');
+            
+            if(!empId) { barBox.classList.add('hidden'); return; }
+            barBox.classList.remove('hidden');
+            
+            const currentTotal = tasks.filter(t => t.employeeId === empId && t.status !== 'evaluated').reduce((s, t) => s + t.weight, 0);
+            const proposedTotal = currentTotal + weightInput;
+            
+            document.getElementById('balancing-percentage-text').innerText = `${proposedTotal}%`;
+            document.getElementById('balancing-fill').style.width = `${Math.min(proposedTotal, 100)}%`;
+            
+            const errBox = document.getElementById('balancing-error-msg');
+            if(proposedTotal > 100) {
+                document.getElementById('balancing-fill').classList.replace('bg-rctws-secondary', 'bg-rose-500');
+                errBox.classList.remove('hidden');
+            } else {
+                document.getElementById('balancing-fill').classList.replace('bg-rose-500', 'bg-rctws-secondary');
+                errBox.classList.add('hidden');
+            }
+        };
+
+        document.getElementById('assign-submit-btn').addEventListener('click', () => {
+            const empId = document.getElementById('assign-employee-select').value;
+            const title = document.getElementById('assign-template-select').value;
+            const freq = document.getElementById('assign-frequency').value;
+            const deadline = document.getElementById('assign-deadline').value;
+            const weight = parseInt(document.getElementById('assign-weight-input').value);
+            
+            if(!empId || !title || !deadline || isNaN(weight) || weight <= 0) return showToast("بيانات ناقصة.", "⚠️");
+            
+            const currentTotal = tasks.filter(t => t.employeeId === empId && t.status !== 'evaluated').reduce((s, t) => s + t.weight, 0);
+            if(currentTotal + weight > 100) return showToast("يجب عمل توزيع برمجى للخصم لتجاوز 100%", "🛑");
+            
+            tasks.push({ id: 'task_' + Date.now(), employeeId: empId, managerId: currentUser.id, title: title, frequency: freq, deadline: deadline, weight: weight, status: 'pending', evaluation: 0, locked: false, complaint: null, empNote: null });
+            DB.set('tasks', tasks); renderDashboard();
+            ['assign-employee-select', 'assign-template-select', 'assign-deadline', 'assign-weight-input'].forEach(i => document.getElementById(i).value = '');
+        });
+
+        window.autoRebalanceWeights = () => {
+            const empId = document.getElementById('assign-employee-select').value;
+            const newWeight = parseInt(document.getElementById('assign-weight-input').value) || 0;
+            if(!empId || newWeight <= 0) return;
+
+            let openTasks = tasks.filter(t => t.employeeId === empId && t.status !== 'evaluated');
+            if(openTasks.length === 0) return;
+
+            const excess = (openTasks.reduce((s, t) => s + t.weight, 0) + newWeight) - 100;
+            if(excess <= 0) return;
+
+            const deductionPerTask = excess / openTasks.length;
+            openTasks.forEach(t => { t.weight = Math.max(1, t.weight - deductionPerTask); });
+            
+            DB.set('tasks', tasks);
+            showToast("تم إعادة توازن الأوزان المفتوحة لتقبل المهمة الجديدة.", "⚖️");
+            checkManagerWeights(); 
+        };
+
+        window.submitTaskEvaluation = (taskId) => {
+            const val = parseInt(document.getElementById(`eval-val-${taskId}`).value);
+            if(isNaN(val) || val < 0 || val > 100) return;
+            const t = tasks.find(x => x.id === taskId);
+            if(t) { t.status = 'evaluated'; t.evaluation = val; DB.set('tasks', tasks); renderDashboard(); }
+        };
+
+        // ================= الإدارة العليا (Admin) =================
+        window.renderAdminDashboard = () => {
+            const dash = document.getElementById('admin-dashboard'); dash.classList.remove('hidden'); dash.classList.add('flex');
+            
+            // التظلمات
+            const compBody = document.getElementById('admin-complaints-body'); compBody.innerHTML = '';
+            const complaints = tasks.filter(t => t.complaint !== null);
+            
+            if(complaints.length === 0) {
+                document.getElementById('admin-complaints-area').classList.add('hidden');
+            } else {
+                document.getElementById('admin-complaints-area').classList.remove('hidden');
+                complaints.forEach(t => {
+                    const emp = users.find(u => u.id === t.employeeId);
+                    compBody.innerHTML += `
+                        <tr class="hover:bg-white transition border-b border-rose-100">
+                            <td class="p-3 font-bold text-slate-800">${emp ? emp.name : '-'}</td>
+                            <td class="p-3 text-xs font-bold text-slate-700">${t.title} <span class="text-rose-500">(${t.frequency})</span></td>
+                            <td class="p-3 text-center text-rose-600 font-black text-lg">${t.evaluation}%</td>
+                            <td class="p-3 text-xs bg-white border border-rose-100 rounded text-rose-900 font-bold p-2 leading-relaxed w-1/3">${t.complaint}</td>
+                            <td class="p-3 text-center">
+                                <div class="flex gap-2 justify-center flex-wrap">
+                                    <button onclick="adminResolveComplaint('${t.id}', true)" class="bg-slate-800 hover:bg-black text-white px-3 py-2 rounded text-[10px] font-bold shadow-md">رفض التظلم وتأييد المدير</button>
+                                    <button onclick="adminResolveComplaint('${t.id}', false)" class="bg-rctws-accent hover:bg-yellow-600 text-rctws-primary font-bold px-3 py-2 rounded text-[10px] shadow-md">قبول وإعادة للمدير للتقييم</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+            }
+
+            document.getElementById('admin-stat-total-tasks').innerText = tasks.length;
+            const completed = tasks.filter(t => t.status === 'evaluated' || t.locked).length;
+            document.getElementById('admin-stat-completed').innerText = completed;
+            document.getElementById('admin-stat-progress').style.width = tasks.length ? `${(completed/tasks.length)*100}%` : '0%';
+
+            // المستخدمين
+            const usersBody = document.getElementById('admin-users-table-body'); usersBody.innerHTML = '';
+            users.forEach(u => {
+                const roleD = u.role === 'admin' ? '<span class="bg-rctws-primary text-rctws-accent px-2 py-1 rounded">إدارة عليا</span>' : (u.role === 'manager' ? '<span class="bg-rctws-secondary text-white px-2 py-1 rounded">مدير إدارة</span>' : 'موظف');
+                usersBody.innerHTML += `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="p-4 font-black text-rctws-primary">${u.name}</td>
+                        <td class="p-4 text-xs font-bold text-slate-500">${u.email}</td>
+                        <td class="p-4 text-[10px] font-bold">${roleD} <span class="block mt-1 text-slate-400">${u.department}</span></td>
+                        <td class="p-4 text-center font-black">${u.baseSalary || 0}</td>
+                        <td class="p-4 text-center font-black text-rctws-accent">${u.variableSalary || 0}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="openEditUserModal('${u.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-bold">إدارة الراتب / الصلاحية</button>
+                        </td>
+                    </tr>`;
+            });
+
+            // تقرير شامل للمهام
+            const reportBody = document.getElementById('admin-full-report-table'); reportBody.innerHTML = '';
+            tasks.forEach(t => {
+                const emp = users.find(u => u.id === t.employeeId), mgr = users.find(u => u.id === t.managerId);
+                reportBody.innerHTML += `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="p-3 text-xs font-bold text-slate-500">${mgr ? mgr.name : '-'}</td>
+                        <td class="p-3 font-bold text-rctws-primary">${emp ? emp.name : '-'}</td>
+                        <td class="p-3 text-xs font-bold">${t.title} <span class="text-rctws-accent">(${t.frequency})</span></td>
+                        <td class="p-3 text-xs font-bold">${t.deadline}</td>
+                        <td class="p-3 text-center font-black">${t.weight}%</td>
+                        <td class="p-3 text-center text-[10px] font-bold">${t.locked ? 'تأخير مقفل' : t.status}</td>
+                        <td class="p-3 text-center font-black text-lg ${t.evaluation >= 90 ? 'text-emerald-600' : 'text-slate-600'}">${t.evaluation}%</td>
+                    </tr>`;
+            });
+        };
+
+        window.adminResolveComplaint = (taskId, reject) => {
+            const t = tasks.find(x => x.id === taskId);
+            if(t) {
+                if(reject) { t.complaint = null; showToast("تم تأييد قرار المدير ورفض التظلم.", "⚖️"); }
+                else { t.complaint = null; t.status = 'completed'; showToast("تم فتح المهمة ليعيد المدير تقييمها.", "🔄"); }
+                DB.set('tasks', tasks); renderDashboard();
+            }
+        };
+
+        // نوافذ التعديل والإنشاء (Admin) بـ Firebase
+        window.openCreateUserModal = () => {
+            const mgrSelect = document.getElementById('new-user-manager'); mgrSelect.innerHTML = '<option value="">-- اختياري --</option>';
+            users.filter(x => x.role === 'manager').forEach(m => mgrSelect.innerHTML += `<option value="${m.id}">${m.name} (${m.department})</option>`);
+            document.getElementById('create-user-modal').classList.remove('hidden');
+        };
+
+        document.getElementById('btn-submit-create-user').addEventListener('click', async () => {
+            const name = document.getElementById('new-user-name').value.trim();
+            const email = document.getElementById('new-user-email').value.trim();
+            const password = document.getElementById('new-user-password').value;
+            const dept = document.getElementById('new-user-dept').value;
+            const role = document.getElementById('new-user-role').value;
+            const managerId = document.getElementById('new-user-manager').value;
+            const baseSal = parseFloat(document.getElementById('new-user-base').value) || 0;
+            const varSal = parseFloat(document.getElementById('new-user-var').value) || 0;
+
+            if(!name || !email || !password) return showToast("أكمل البيانات الأساسية", "⚠️");
+            if(users.some(u => u.email === email)) return showToast("البريد الإلكتروني موجود مسبقاً", "❌");
+
+            const btn = document.getElementById('btn-submit-create-user');
+            btn.innerText = 'جاري الإنشاء في Firebase...'; btn.disabled = true;
+
+            try {
+                // إنشاء المستخدم في Firebase
+                await createUserWithEmailAndPassword(auth, email, password);
+                
+                // حفظ البيانات في القاعدة المحلية
+                users.push({ id: 'usr_' + Date.now(), name, email, role, department: dept, phone: '', managerId: role === 'employee' ? managerId : null, baseSalary: baseSal, variableSalary: varSal });
+                DB.set('users', users);
+                
+                // تسجيل خروج الأدمن إجبارياً للعودة للشاشة الرئيسية
+                alert("تم إنشاء المستخدم في Firebase وحفظ صلاحياته.\nلدواعي الأمن (Firebase Auth)، تم تسجيل خروجك وعليك الدخول بحسابك (الأدمن) مرة أخرى.");
+                await signOut(auth);
+                window.location.reload();
+
+            } catch (error) {
+                console.error(error);
+                if(error.code === 'auth/email-already-in-use') showToast("البريد مسجل مسبقاً في Firebase", "❌");
+                else if(error.code === 'auth/weak-password') showToast("كلمة المرور ضعيفة (6 أحرف على الأقل)", "❌");
+                else showToast("حدث خطأ في إنشاء الحساب", "❌");
+                btn.innerText = 'إنشاء الحساب'; btn.disabled = false;
+            }
+        });
+
+        window.openEditUserModal = (userId) => {
+            const u = users.find(x => x.id === userId); if(!u) return;
+            document.getElementById('edit-user-id').value = u.id; 
+            document.getElementById('edit-user-name').value = u.name; 
+            document.getElementById('edit-user-role').value = u.role; 
+            document.getElementById('edit-user-base-salary').value = u.baseSalary || 0;
+            document.getElementById('edit-user-var-salary').value = u.variableSalary || 0;
+            
+            const mgrSelect = document.getElementById('edit-user-manager'); mgrSelect.innerHTML = '<option value="">-- بدون مدير --</option>';
+            users.filter(x => x.role === 'manager').forEach(m => mgrSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`);
+            if(u.managerId) mgrSelect.value = u.managerId;
+            
+            window.toggleEditManagerSelect(); document.getElementById('edit-user-modal').classList.remove('hidden');
+        };
+        window.toggleEditManagerSelect = () => { document.getElementById('edit-user-manager-container').style.display = document.getElementById('edit-user-role').value === 'employee' ? 'block' : 'none'; };
+        
+        window.saveUserEdit = () => {
+            const userId = document.getElementById('edit-user-id').value;
+            const u = users.find(x => x.id === userId); if(!u) return;
+            
+            u.name = document.getElementById('edit-user-name').value.trim();
+            u.role = document.getElementById('edit-user-role').value;
+            u.baseSalary = parseFloat(document.getElementById('edit-user-base-salary').value) || 0;
+            u.variableSalary = parseFloat(document.getElementById('edit-user-var-salary').value) || 0;
+            u.managerId = u.role === 'employee' ? document.getElementById('edit-user-manager').value : null;
+            
+            DB.set('users', users); document.getElementById('edit-user-modal').classList.add('hidden'); renderDashboard(); showToast("تم تحديث الصلاحيات والرواتب", "🔐");
+        };
+
+        window.onload = () => { loadLocalData(); document.getElementById('login-panel').classList.remove('hidden'); };
+    </script>
+</body>
+</html>
